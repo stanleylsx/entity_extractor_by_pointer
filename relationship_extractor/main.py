@@ -3,7 +3,7 @@ from random import choice
 from tqdm import tqdm
 import json
 import numpy as np
-import model
+from relationship_extractor import model
 import torch
 import torch.utils.data as Data
 import time
@@ -36,15 +36,7 @@ def seq_padding_vec(X):
     return [x + [[1, 0]] * (ML - len(x)) for x in X]
 
 
-train_data = json.load(open('./train_data_me.json'))
-dev_data = json.load(open('./dev_data_me.json'))
-id2predicate, predicate2id = json.load(open('./all_50_schemas_me.json'))
-id2predicate = {int(i): j for i, j in id2predicate.items()}
-id2char, char2id = json.load(open('./all_chars_me.json'))
-num_classes = len(id2predicate)
-
-
-class data_generator:
+class DataGenerator:
     def __init__(self, data, batch_size=64):
         self.data = data
         self.batch_size = batch_size
@@ -74,7 +66,6 @@ class data_generator:
                     items[key].append((objectid, objectid + len(sp[2]), predicate2id[sp[1]]))
             if items:
                 T.append([char2id.get(c, 1) for c in text])  # 1是unk，0是padding
-                # s1, s2 = [[1,0]] * len(text), [[1,0]] * len(text)
                 s1, s2 = [0] * len(text), [0] * len(text)
                 for j in items:
                     # s1[j[0]] = [0,1]
@@ -103,13 +94,12 @@ class data_generator:
         return [T, S1, S2, K1, K2, O1, O2]
 
 
-class myDataset(Data.Dataset):
+class MyDataset(Data.Dataset):
     """
         下载数据、初始化数据，都可以在这里完成
     """
 
     def __init__(self, _T, _S1, _S2, _K1, _K2, _O1, _O2):
-        # xy = np.loadtxt('../dataSet/diabetes.csv.gz', delimiter=',', dtype=np.float32) # 使用numpy读取数据
         self.x_data = _T
         self.y1_data = _S1
         self.y2_data = _S2
@@ -145,31 +135,6 @@ def collate_fn(data):
         'O1': torch.LongTensor(o1),
         'O2': torch.LongTensor(o2),
     }
-
-
-dg = data_generator(train_data)
-T, S1, S2, K1, K2, O1, O2 = dg.pro_res()
-# print("len",len(T))
-
-torch_dataset = myDataset(T, S1, S2, K1, K2, O1, O2)
-loader = Data.DataLoader(
-    dataset=torch_dataset,  # torch TensorDataset format
-    batch_size=BATCH_SIZE,  # mini batch size
-    shuffle=True,  # random shuffle for training
-    num_workers=8,
-    collate_fn=collate_fn,  # subprocesses for loading data
-)
-
-
-s_m = model.s_model(len(char2id) + 2, CHAR_SIZE, HIDDEN_SIZE)
-po_m = model.po_model(len(char2id) + 2, CHAR_SIZE, HIDDEN_SIZE, 49)
-params = list(s_m.parameters())
-
-params += list(po_m.parameters())
-optimizer = torch.optim.Adam(params, lr=0.001)
-
-loss = torch.nn.CrossEntropyLoss()
-b_loss = torch.nn.BCEWithLogitsLoss()
 
 
 def extract_items(text_in):
@@ -222,66 +187,86 @@ def evaluate():
     return 2 * A / (B + C), A / B, A / C
 
 
-best_f1 = 0
-best_epoch = 0
+if __name__ == '__main__':
+    train_data = json.load(open('relationship_extractor/data/train_data_me.json'))
+    dev_data = json.load(open('relationship_extractor/data/dev_data_me.json'))
+    id2predicate, predicate2id = json.load(open('relationship_extractor/data/all_50_schemas_me.json'))
+    id2predicate = {int(i): j for i, j in id2predicate.items()}
+    id2char, char2id = json.load(open('relationship_extractor/data/all_chars_me.json'))
+    num_classes = len(id2predicate)
+    dg = DataGenerator(train_data)
+    T, S1, S2, K1, K2, O1, O2 = dg.pro_res()
 
-for i in range(EPOCH_NUM):
-    for step, loader_res in tqdm(iter(enumerate(loader))):
-        # print(get_now_time())
-        t_s = loader_res["T"]
-        k1 = loader_res["K1"]
-        k2 = loader_res["K2"]
-        s1 = loader_res["S1"]
-        s2 = loader_res["S2"]
-        o1 = loader_res["O1"]
-        o2 = loader_res["O2"]
+    torch_dataset = MyDataset(T, S1, S2, K1, K2, O1, O2)
+    loader = Data.DataLoader(
+        dataset=torch_dataset,  # torch TensorDataset format
+        batch_size=BATCH_SIZE,  # mini batch size
+        shuffle=True,  # random shuffle for training
+        num_workers=8,
+        collate_fn=collate_fn,  # subprocesses for loading data
+    )
 
-        ps_1, ps_2, t, t_max, mask = s_m(t_s)
+    s_m = model.S_Model(len(char2id) + 2, CHAR_SIZE, HIDDEN_SIZE)
+    po_m = model.PO_Model(len(char2id) + 2, CHAR_SIZE, HIDDEN_SIZE, 49)
+    params = list(s_m.parameters())
 
-        t, t_max, k1, k2 = t, t_max, k1, k2
-        po_1, po_2 = po_m(t, t_max, k1, k2)
+    params += list(po_m.parameters())
+    optimizer = torch.optim.Adam(params, lr=0.001)
 
-        ps_1 = ps_1
-        ps_2 = ps_2
-        po_1 = po_1
-        po_2 = po_2
+    loss = torch.nn.CrossEntropyLoss()
+    b_loss = torch.nn.BCEWithLogitsLoss()
+    best_f1 = 0
+    best_epoch = 0
+    loss_sum = 0
 
-        s1 = torch.unsqueeze(s1, 2)
-        s2 = torch.unsqueeze(s2, 2)
+    for i in range(EPOCH_NUM):
+        for step, loader_res in tqdm(iter(enumerate(loader))):
+            # print(get_now_time())
+            t_s = loader_res["T"]
+            k1 = loader_res["K1"]
+            k2 = loader_res["K2"]
+            s1 = loader_res["S1"]
+            s2 = loader_res["S2"]
+            o1 = loader_res["O1"]
+            o2 = loader_res["O2"]
 
-        s1_loss = b_loss(ps_1, s1)
-        s1_loss = torch.sum(s1_loss.mul(mask)) / torch.sum(mask)
-        s2_loss = b_loss(ps_2, s2)
-        s2_loss = torch.sum(s2_loss.mul(mask)) / torch.sum(mask)
+            ps_1, ps_2, t, t_max, mask = s_m(t_s)
 
-        po_1 = po_1.permute(0, 2, 1)
-        po_2 = po_2.permute(0, 2, 1)
+            t, t_max, k1, k2 = t, t_max, k1, k2
+            po_1, po_2 = po_m(t, t_max, k1, k2)
 
-        o1_loss = loss(po_1, o1)
-        o1_loss = torch.sum(o1_loss.mul(mask[:, :, 0])) / torch.sum(mask)
-        o2_loss = loss(po_2, o2)
-        o2_loss = torch.sum(o2_loss.mul(mask[:, :, 0])) / torch.sum(mask)
+            s1 = torch.unsqueeze(s1, 2)
+            s2 = torch.unsqueeze(s2, 2)
 
-        loss_sum = 2.5 * (s1_loss + s2_loss) + (o1_loss + o2_loss)
+            s1_loss = b_loss(ps_1, s1)
+            s1_loss = torch.sum(s1_loss.mul(mask)) / torch.sum(mask)
+            s2_loss = b_loss(ps_2, s2)
+            s2_loss = torch.sum(s2_loss.mul(mask)) / torch.sum(mask)
 
-        # if step % 500 == 0:
-        # 	torch.save(s_m, 'models_real/s_'+str(step)+"epoch_"+str(i)+'.pkl')
-        # 	torch.save(po_m, 'models_real/po_'+str(step)+"epoch_"+str(i)+'.pkl')
+            po_1 = po_1.permute(0, 2, 1)
+            po_2 = po_2.permute(0, 2, 1)
 
-        optimizer.zero_grad()
+            o1_loss = loss(po_1, o1)
+            o1_loss = torch.sum(o1_loss.mul(mask[:, :, 0])) / torch.sum(mask)
+            o2_loss = loss(po_2, o2)
+            o2_loss = torch.sum(o2_loss.mul(mask[:, :, 0])) / torch.sum(mask)
 
-        loss_sum.backward()
-        optimizer.step()
+            loss_sum = 2.5 * (s1_loss + s2_loss) + (o1_loss + o2_loss)
 
-    torch.save(s_m, 'models_real/s_' + str(i) + '.pkl')
-    torch.save(po_m, 'models_real/po_' + str(i) + '.pkl')
-    f1, precision, recall = evaluate()
+            optimizer.zero_grad()
 
-    print("epoch:", i, "loss:", loss_sum.data)
+            loss_sum.backward()
+            optimizer.step()
 
-    if f1 >= best_f1:
-        best_f1 = f1
-        best_epoch = i
+        torch.save(s_m, 'relationship_extractor/models/s_' + str(i) + '.pkl')
+        torch.save(po_m, 'relationship_extractor/models/po_' + str(i) + '.pkl')
+        f1, precision, recall = evaluate()
 
-    print('f1: %.4f, precision: %.4f, recall: %.4f, bestf1: %.4f, bestepoch: %d \n ' % (
-    f1, precision, recall, best_f1, best_epoch))
+        print("epoch:", i, "loss:", loss_sum.data)
+
+        if f1 >= best_f1:
+            best_f1 = f1
+            best_epoch = i
+
+        print('f1: %.4f, precision: %.4f, recall: %.4f, bestf1: %.4f, bestepoch: %d \n ' % (
+        f1, precision, recall, best_f1, best_epoch))

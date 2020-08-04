@@ -45,9 +45,9 @@ def seq_gather(x):
     return res
 
 
-class s_model(nn.Module):
+class S_Model(nn.Module):
     def __init__(self, word_dict_length, word_emb_size, lstm_hidden_size):
-        super(s_model, self).__init__()
+        super(S_Model, self).__init__()
 
         self.embeds = nn.Embedding(word_dict_length, word_emb_size)
         self.fc1_dropout = nn.Sequential(nn.Dropout(0.25),)  # drop 20% of the neuron
@@ -113,9 +113,9 @@ class s_model(nn.Module):
         return [ps1, ps2, t, t_max, mask]
 
 
-class po_model(nn.Module):
+class PO_Model(nn.Module):
     def __init__(self, word_dict_length, word_emb_size, lstm_hidden_size, num_classes):
-        super(po_model, self).__init__()
+        super(PO_Model, self).__init__()
 
         self.conv1 = nn.Sequential(
             nn.Conv1d(
