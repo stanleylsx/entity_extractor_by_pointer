@@ -220,7 +220,7 @@ if __name__ == '__main__':
     loss_sum = 0
 
     for i in range(EPOCH_NUM):
-        for step, loader_res in tqdm(iter(enumerate(loader))):
+        for step, loader_res in enumerate(tqdm(loader)):
             # print(get_now_time())
             t_s = loader_res["T"]
             k1 = loader_res["K1"]
