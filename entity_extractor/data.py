@@ -103,7 +103,7 @@ def collate_fn(data_set):
 
 
 if __name__ == '__main__':
-    train_data = json.load(open('data/train_data_test.json'))
+    train_data = json.load(open('data/train_data_test.json', encoding='utf-8'))
     # dev_data = json.load(open('data/dev_data.json'))
     data_generator = DataGenerator(train_data)
     sentence, start_vectors, end_vectors = data_generator.prepare_data()
