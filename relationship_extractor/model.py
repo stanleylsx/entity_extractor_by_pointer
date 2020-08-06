@@ -128,15 +128,8 @@ class PO_Model(nn.Module):
             nn.ReLU(),
         )
 
-        self.fc_ps1 = nn.Sequential(
-            nn.Linear(word_emb_size, num_classes + 1),
-            # nn.Softmax(),
-        )
-
-        self.fc_ps2 = nn.Sequential(
-            nn.Linear(word_emb_size, num_classes + 1),
-            # nn.Softmax(),
-        )
+        self.fc_ps1 = nn.Sequential(nn.Linear(word_emb_size, num_classes + 1))
+        self.fc_ps2 = nn.Sequential(nn.Linear(word_emb_size, num_classes + 1))
 
     def forward(self, t, t_max, k1, k2):
         k1 = seq_gather([t, k1])

@@ -90,25 +90,25 @@ class MyDataset(Dataset):
         return self.len
 
 
-def collate_fn(data_set):
+def collate_fn(data):
     """
     如何取样本的，定义自己的函数来准确地实现想要的功能
     """
-    sentence = np.array([item[0] for item in data_set], np.int32)
-    start_vec = np.array([item[1] for item in data_set], np.int32)
-    end_vec = np.array([item[2] for item in data_set], np.int32)
+    sentence = np.array([item[0] for item in data], np.int32)
+    start_vec = np.array([item[1] for item in data], np.int32)
+    end_vec = np.array([item[2] for item in data], np.int32)
     return {'sentence': torch.LongTensor(sentence),
             'start_vec': torch.FloatTensor(start_vec),
             'end_vec': torch.FloatTensor(end_vec)}
 
 
 if __name__ == '__main__':
-    train_data = json.load(open('data/train_data_test.json', encoding='utf-8'))
+    train_data = json.load(open('./data/train_data_test.json', encoding='utf-8'))
     # dev_data = json.load(open('data/dev_data.json'))
     data_generator = DataGenerator(train_data)
     sentence, start_vectors, end_vectors = data_generator.prepare_data()
     torch_dataset = MyDataset(sentence, start_vectors, end_vectors)
-    data_loader = DataLoader(
+    loader = DataLoader(
         dataset=torch_dataset,  # torch TensorDataset format
         batch_size=BATCH_SIZE,  # mini batch size
         shuffle=True,  # random shuffle for training
@@ -125,12 +125,15 @@ if __name__ == '__main__':
     optimizer = AdamW(params, lr=learning_rate, eps=adam_epsilon)
     loss = torch.nn.BCEWithLogitsLoss()
 
-    for step, loader_res in enumerate(data_loader):
-        sentences = data_loader['sentence']
-        print(sentence)
-        # start_vec = data_loader['start_vec']
-        # end_vec = data_loader['end_vec']
-        # print(sentences, start_vec)
+    for i in range(EPOCH_NUM):
+        for step, loader_res in enumerate(tqdm(loader)):
+            sentences = loader_res['sentence']
+            start_vec = loader_res['start_vec']
+            end_vec = loader_res['end_vec']
+            start, end = model(sentences)
+            print(start, end)
+            s_loss = loss(start, start_vec)
+            e_loss = loss(end, end_vec)
 
 
 
