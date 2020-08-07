@@ -1,9 +1,8 @@
 from transformers import *
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 import torch
 import numpy as np
 import re
-import json
 
 BATCH_SIZE = 64
 EPOCH_NUM = 10
@@ -98,42 +97,8 @@ def collate_fn(data):
     start_vec = np.array([item[1] for item in data], np.int32)
     end_vec = np.array([item[2] for item in data], np.int32)
     return {'sentence': torch.LongTensor(sentence),
-            'start_vec': torch.FloatTensor(start_vec),
-            'end_vec': torch.FloatTensor(end_vec)}
-
-
-if __name__ == '__main__':
-    train_data = json.load(open('./data/train_data_test.json', encoding='utf-8'))
-    # dev_data = json.load(open('data/dev_data.json'))
-    data_generator = DataGenerator(train_data)
-    sentence, start_vectors, end_vectors = data_generator.prepare_data()
-    torch_dataset = MyDataset(sentence, start_vectors, end_vectors)
-    loader = DataLoader(
-        dataset=torch_dataset,  # torch TensorDataset format
-        batch_size=BATCH_SIZE,  # mini batch size
-        shuffle=True,  # random shuffle for training
-        num_workers=8,
-        collate_fn=collate_fn,  # subprocesses for loading data
-    )
-    from model import Model
-    from transformers import AdamW
-    from tqdm import tqdm
-    learning_rate = 4e-05
-    adam_epsilon = 1e-05
-    model = Model()
-    params = list(model.parameters())
-    optimizer = AdamW(params, lr=learning_rate, eps=adam_epsilon)
-    loss = torch.nn.BCEWithLogitsLoss()
-
-    for i in range(EPOCH_NUM):
-        for step, loader_res in enumerate(tqdm(loader)):
-            sentences = loader_res['sentence']
-            start_vec = loader_res['start_vec']
-            end_vec = loader_res['end_vec']
-            start, end = model(sentences)
-            print(start, end)
-            s_loss = loss(start, start_vec)
-            e_loss = loss(end, end_vec)
+            'start_vec': torch.LongTensor(start_vec),
+            'end_vec': torch.LongTensor(end_vec)}
 
 
 

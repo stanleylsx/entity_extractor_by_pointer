@@ -188,11 +188,11 @@ def evaluate():
 
 
 if __name__ == '__main__':
-    train_data = json.load(open('./data/train_data_me.json', encoding='utf-8'))
-    dev_data = json.load(open('./data/dev_data_me.json', encoding='utf-8'))
-    id2predicate, predicate2id = json.load(open('./data/all_50_schemas_me.json', encoding='utf-8'))
+    train_data = json.load(open('relationship_extractor/data/train_data_me.json', encoding='utf-8'))
+    dev_data = json.load(open('relationship_extractor/data/dev_data_me.json', encoding='utf-8'))
+    id2predicate, predicate2id = json.load(open('relationship_extractor/data/all_50_schemas_me.json', encoding='utf-8'))
     id2predicate = {int(i): j for i, j in id2predicate.items()}
-    id2char, char2id = json.load(open('./data/all_chars_me.json', encoding='utf-8'))
+    id2char, char2id = json.load(open('relationship_extractor/data/all_chars_me.json', encoding='utf-8'))
     num_classes = len(id2predicate)
     dg = DataGenerator(train_data)
     T, S1, S2, K1, K2, O1, O2 = dg.pro_res()
@@ -202,7 +202,7 @@ if __name__ == '__main__':
         dataset=torch_dataset,  # torch TensorDataset format
         batch_size=BATCH_SIZE,  # mini batch size
         shuffle=True,  # random shuffle for training
-        num_workers=8,
+        num_workers=0,
         collate_fn=collate_fn,  # subprocesses for loading data
     )
 
