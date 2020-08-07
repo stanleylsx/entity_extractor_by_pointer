@@ -28,6 +28,7 @@ if __name__ == '__main__':
     params = list(model.parameters())
     optimizer = AdamW(params, lr=learning_rate, eps=adam_epsilon)
     loss = torch.nn.CrossEntropyLoss()
+    loss_sum = 0
 
     for i in range(EPOCH_NUM):
         for step, loader_res in tqdm(iter(enumerate(loader))):
@@ -43,7 +44,10 @@ if __name__ == '__main__':
             e_loss = loss(end, end_vec)
 
             loss_sum = s_loss + e_loss
-            print(loss_sum)
+            print(loss_sum.data)
             optimizer.zero_grad()
             loss_sum.backward()
             optimizer.step()
+
+        # f1, precision, recall = evaluate()
+        print("epoch:", i, "loss:", loss_sum.data)
