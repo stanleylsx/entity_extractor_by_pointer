@@ -9,11 +9,11 @@ import torch
 
 
 if __name__ == '__main__':
-    train_data = json.load(open('./data/train_data.json', encoding='utf-8'))
+    train_data = json.load(open('./data/train_data_test.json', encoding='utf-8'))
     # dev_data = json.load(open('data/dev_data.json'))
     data_generator = DataGenerator(train_data)
-    sentence, start_vectors, end_vectors = data_generator.prepare_data()
-    torch_dataset = MyDataset(sentence, start_vectors, end_vectors)
+    sentence, segment, attention_mask, start_vectors, end_vectors = data_generator.prepare_data()
+    torch_dataset = MyDataset(sentence, segment, attention_mask, start_vectors, end_vectors)
     loader = DataLoader(
         dataset=torch_dataset,  # torch TensorDataset format
         batch_size=BATCH_SIZE,  # mini batch size
@@ -33,10 +33,11 @@ if __name__ == '__main__':
     for i in range(EPOCH_NUM):
         for step, loader_res in tqdm(iter(enumerate(loader))):
             sentences = loader_res['sentence']
+            attention_mask = loader_res['attention_mask']
             start_vec = loader_res['start_vec']
             end_vec = loader_res['end_vec']
             with torch.no_grad():
-                batch_hidden_states, batch_attentions = bert_model(sentences)[-2:]
+                batch_hidden_states, batch_attentions = bert_model(sentences, attention_mask=attention_mask)
             start, end = model(batch_hidden_states)
             start = start.permute(0, 2, 1)
             end = end.permute(0, 2, 1)
