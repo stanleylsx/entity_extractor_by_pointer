@@ -4,16 +4,16 @@ from tqdm import tqdm
 from torch.utils.data import DataLoader
 from data import DataGenerator, MyDataset, collate_fn
 from data import BATCH_SIZE, EPOCH_NUM
+from predict import evaluate
 import json
 import torch
 
-
 if __name__ == '__main__':
     train_data = json.load(open('./data/train_data_test.json', encoding='utf-8'))
-    # dev_data = json.load(open('data/dev_data.json'))
+    dev_data = json.load(open('./data/dev_data_test.json', encoding='utf-8'))
     data_generator = DataGenerator(train_data)
-    sentence, segment, attention_mask, start_vectors, end_vectors = data_generator.prepare_data()
-    torch_dataset = MyDataset(sentence, segment, attention_mask, start_vectors, end_vectors)
+    sentence, segment, attention_mask, entity_vectors = data_generator.prepare_data()
+    torch_dataset = MyDataset(sentence, segment, attention_mask, entity_vectors)
     loader = DataLoader(
         dataset=torch_dataset,  # torch TensorDataset format
         batch_size=BATCH_SIZE,  # mini batch size
@@ -23,32 +23,36 @@ if __name__ == '__main__':
     )
     learning_rate = 4e-05
     adam_epsilon = 1e-05
-    model = Model()
+    model = Model(hidden_size=768, num_labels=3)
     bert_model = BertModel.from_pretrained('bert-base-chinese')
     params = list(model.parameters())
     optimizer = AdamW(params, lr=learning_rate, eps=adam_epsilon)
-    loss = torch.nn.CrossEntropyLoss()
-    loss_sum = 0
+    loss_function = torch.nn.BCELoss(reduction='none')
+    loss, loss_sum = 0, 0
+    best_f1 = 0
+    best_epoch = 0
 
     for i in range(EPOCH_NUM):
+        print('epoch:{}/{}'.format(i, EPOCH_NUM))
         for step, loader_res in tqdm(iter(enumerate(loader))):
             sentences = loader_res['sentence']
             attention_mask = loader_res['attention_mask']
-            start_vec = loader_res['start_vec']
-            end_vec = loader_res['end_vec']
+            entity_vec = loader_res['entity_vec']
             with torch.no_grad():
-                batch_hidden_states, batch_attentions = bert_model(sentences, attention_mask=attention_mask)
-            start, end = model(batch_hidden_states)
-            start = start.permute(0, 2, 1)
-            end = end.permute(0, 2, 1)
-            s_loss = loss(start, start_vec)
-            e_loss = loss(end, end_vec)
-
-            loss_sum = s_loss + e_loss
-            print(loss_sum.data)
+                bert_hidden_states, batch_attentions = bert_model(sentences, attention_mask=attention_mask)
+            model_output = model(bert_hidden_states)
+            loss = loss_function(model_output, entity_vec.float())
+            loss = torch.sum(torch.mean(loss, 3), 2)
+            loss = torch.sum(loss * attention_mask) / torch.sum(attention_mask)
+            print('loss:{}'.format(loss.item()))
             optimizer.zero_grad()
-            loss_sum.backward()
+            loss.backward()
             optimizer.step()
+        model.eval()
+        f1, precision, recall = evaluate(bert_model, model, dev_data)
+        if f1 >= best_f1:
+            best_f1 = f1
+            best_epoch = i
 
-        # f1, precision, recall = evaluate()
-        print("epoch:", i, "loss:", loss_sum.data)
+        print('f1: %.4f, precision: %.4f, recall: %.4f, bestf1: %.4f, bestepoch: %d \n ' % (
+            f1, precision, recall, best_f1, best_epoch))
