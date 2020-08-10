@@ -32,6 +32,7 @@ def evaluate(bert_model, model, dev_data):
     T = set()
     for data_row in tqdm(iter(dev_data)):
         R = set(extract_entities(data_row.get('text'), bert_model, model))
+        print(R)
         if data_row.get('company') is not None:
             T.add((0, data_row.get('company')))
         if data_row.get('position') is not None:

@@ -53,6 +53,7 @@ if __name__ == '__main__':
         if f1 >= best_f1:
             best_f1 = f1
             best_epoch = i
+            torch.save(model, './model/model_' + str(i) + '.pkl')
 
         print('f1: %.4f, precision: %.4f, recall: %.4f, bestf1: %.4f, bestepoch: %d \n ' % (
             f1, precision, recall, best_f1, best_epoch))
