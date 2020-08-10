@@ -9,8 +9,8 @@ import json
 import torch
 
 if __name__ == '__main__':
-    train_data = json.load(open('./data/train_data_test.json', encoding='utf-8'))
-    dev_data = json.load(open('./data/dev_data_test.json', encoding='utf-8'))
+    train_data = json.load(open('./data/train_data.json', encoding='utf-8'))
+    dev_data = json.load(open('./data/dev_data.json', encoding='utf-8'))
     data_generator = DataGenerator(train_data)
     sentence, segment, attention_mask, entity_vectors = data_generator.prepare_data()
     torch_dataset = MyDataset(sentence, segment, attention_mask, entity_vectors)
