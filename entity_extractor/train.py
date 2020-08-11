@@ -66,6 +66,6 @@ if __name__ == '__main__':
             model_name = 'model_' + str(i) + '.pkl'
             torch.save(model, os.path.join(model_dir, model_name))
             logger.info('saved ' + model_name + ' successful...')
-        logger.info('loss: %.4f, f1: %.4f, precision: %.4f, recall: %.4f, best_f1: %.4f, best_epoch: %d \n' % (
-                loss_sum // step, f1, precision, recall, best_f1, best_epoch))
+        logger.info('loss: %.4f, f1: %.4f, precision: %.4f, recall: %.4f, best_f1: %.4f, best_epoch: %d \n'
+                    % (loss_sum // step, f1, precision, recall, best_f1, best_epoch))
 
