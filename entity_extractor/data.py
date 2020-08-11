@@ -5,7 +5,7 @@ import numpy as np
 import re
 
 BATCH_SIZE = 64
-EPOCH_NUM = 10
+EPOCH_NUM = 30
 
 
 class DataGenerator:

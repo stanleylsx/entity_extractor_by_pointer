@@ -51,7 +51,7 @@ if __name__ == '__main__':
             loss = loss_function(model_output, entity_vec.float())
             loss = torch.sum(torch.mean(loss, 3), 2)
             loss = torch.sum(loss * attention_mask) / torch.sum(attention_mask)
-            logger.info('loss in step {}:{}'.format(str(step), loss.item()))
+            # logger.info('loss in step {}:{}'.format(str(step), loss.item()))
             loss_sum += loss.item()
             optimizer.zero_grad()
             loss.backward()
@@ -66,6 +66,7 @@ if __name__ == '__main__':
             model_name = 'model_' + str(i) + '.pkl'
             torch.save(model, os.path.join(model_dir, model_name))
             logger.info('saved ' + model_name + ' successful...')
-        logger.info('loss: %.4f, f1: %.4f, precision: %.4f, recall: %.4f, best_f1: %.4f, best_epoch: %d \n'
-                    % (loss_sum // step, f1, precision, recall, best_f1, best_epoch))
+        aver_loss = loss_sum / step
+        logger.info('aver_loss: %.4f, f1: %.4f, precision: %.4f, recall: %.4f, best_f1: %.4f, best_epoch: %d \n'
+                    % (aver_loss, f1, precision, recall, best_f1, best_epoch))
 
