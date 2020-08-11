@@ -11,7 +11,8 @@ def extract_entities(text, bert_model, model, device):
     predict_results = []
     tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
     token_results = tokenizer(text, padding='max_length')
-    token_ids = torch.unsqueeze(torch.LongTensor(token_results.get('input_ids')), 0).to(device)
+    input_ids = token_results.get('input_ids')
+    token_ids = torch.unsqueeze(torch.LongTensor(input_ids), 0).to(device)
     attention_mask = torch.unsqueeze(torch.LongTensor(token_results.get('attention_mask')), 0).to(device)
     bert_hidden_states = bert_model(token_ids, attention_mask=attention_mask)[0].to(device)
     model_outputs = model(bert_hidden_states).to('cpu')
@@ -21,10 +22,9 @@ def extract_entities(text, bert_model, model, device):
         for _start, predicate1 in zip(*start):
             for _end, predicate2 in zip(*end):
                 if _start <= _end and predicate1 == predicate2:
-                    _entity = text[_start: _start + _end + 1]
-                    predict_results.append((predicate2, _entity))
-                    break
-    return list(set(predict_results))
+                    _entity = tokenizer.decode(input_ids[_start: _end + 1])
+                    predict_results.append((predicate2, _entity.replace(' ', '')))
+    return predict_results
 
 
 def evaluate(bert_model, model, dev_data, device):
