@@ -4,14 +4,17 @@ import torch
 import numpy as np
 
 
-def extract_entities(text, bert_model, model):
+def extract_entities(text, bert_model, model, device):
+    """
+    从验证集中预测到相关实体
+    """
     predict_results = []
     tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
     token_results = tokenizer(text, padding='max_length')
-    token_ids = torch.unsqueeze(torch.LongTensor(token_results.get('input_ids')), 0)
-    attention_mask = torch.unsqueeze(torch.LongTensor(token_results.get('attention_mask')), 0)
-    bert_hidden_states, _ = bert_model(token_ids, attention_mask=attention_mask)
-    model_outputs = model(bert_hidden_states)
+    token_ids = torch.unsqueeze(torch.LongTensor(token_results.get('input_ids')), 0).to(device)
+    attention_mask = torch.unsqueeze(torch.LongTensor(token_results.get('attention_mask')), 0).to(device)
+    bert_hidden_states = bert_model(token_ids, attention_mask=attention_mask)[0].to(device)
+    model_outputs = model(bert_hidden_states).to('cpu')
     for model_output in model_outputs:
         start = np.where(model_output[:, :, 0] > 0.5)
         end = np.where(model_output[:, :, 1] > 0.5)
@@ -24,15 +27,14 @@ def extract_entities(text, bert_model, model):
     return list(set(predict_results))
 
 
-def evaluate(bert_model, model, dev_data):
+def evaluate(bert_model, model, dev_data, device):
     """
     评估函数，计算f1、precision、recall
     """
     A, B, C = 1e-10, 1e-10, 1e-10
     T = set()
     for data_row in tqdm(iter(dev_data)):
-        R = set(extract_entities(data_row.get('text'), bert_model, model))
-        print(R)
+        R = set(extract_entities(data_row.get('text'), bert_model, model, device))
         if data_row.get('company') is not None:
             T.add((0, data_row.get('company')))
         if data_row.get('position') is not None:
@@ -44,4 +46,3 @@ def evaluate(bert_model, model, dev_data):
         C += len(T)
     f1, precision, recall = 2 * A / (B + C), A / B, A / C
     return f1, precision, recall
-

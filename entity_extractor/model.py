@@ -7,13 +7,15 @@ class Model(nn.Module, ABC):
         super().__init__()
         self.num_labels = num_labels
         self.layer_norm = nn.LayerNorm(hidden_size, eps=1e-12)
-        self.fc = nn.Linear(hidden_size, 2 * num_labels)
+        self.fc_1 = nn.Linear(hidden_size, hidden_size)
+        self.fc_2 = nn.Linear(hidden_size, 2 * num_labels)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, bert_hidden_states):
         layer_hidden = self.layer_norm(bert_hidden_states)
-        fc_results = self.fc(layer_hidden)
-        output = self.sigmoid(fc_results)
+        fc1_results = self.fc_1(layer_hidden)
+        fc2_results = self.fc_2(fc1_results)
+        output = self.sigmoid(fc2_results)
         track_output = output ** 4
         batch_size = track_output.size(0)
         transfer_output = track_output.view(batch_size, -1, self.num_labels, 2)

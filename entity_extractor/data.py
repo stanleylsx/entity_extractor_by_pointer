@@ -12,7 +12,8 @@ class DataGenerator:
     def __init__(self, data, logger, batch_size=BATCH_SIZE):
         self.data = data
         self.batch_size = batch_size
-        logger.info('data_length:{},batch_size:{}'.format(len(data), BATCH_SIZE))
+        logger.info('data_length:{},batch_size:{},steps in each epoch:{}'
+                    .format(len(data), BATCH_SIZE, len(data)//BATCH_SIZE))
         assert len(data) >= batch_size, '数据量不够一个批次'
         self.categories = {'company': 0, 'position': 1, 'detail': 2}
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
