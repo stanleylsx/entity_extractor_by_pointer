@@ -4,15 +4,15 @@ import torch
 import numpy as np
 import re
 
-BATCH_SIZE = 64
-EPOCH_NUM = 30
+BATCH_SIZE = 128
+EPOCH_NUM = 50
 
 
 class DataGenerator:
     def __init__(self, data, logger, batch_size=BATCH_SIZE):
         self.data = data
         self.batch_size = batch_size
-        logger.info('data_length:{},batch_size:{},steps in each epoch:{}'
+        logger.info('train_data_length:{},batch_size:{},steps in each epoch:{}'
                     .format(len(data), BATCH_SIZE, len(data)//BATCH_SIZE))
         assert len(data) >= batch_size, '数据量不够一个批次'
         self.categories = {'company': 0, 'position': 1, 'detail': 2}
@@ -28,7 +28,7 @@ class DataGenerator:
     def get_index(text_token, token):
         text_token_str = '#'.join([str(index) for index in text_token])
         token_str = '#'.join([str(index) for index in token])
-        start_str_index = re.search(token_str, text_token_str).span()[0]
+        start_str_index = re.search(token_str, text_token_str).start()
         start_index = text_token_str[:start_str_index].count('#')
         end_index = start_index + len(token)
         return start_index, end_index - 1
@@ -40,42 +40,23 @@ class DataGenerator:
         entity_vectors = []
         for item in self.data:
             text = item.get('text')
-            company = item.get('company')
-            position = item.get('position')
-            detail = item.get('detail')
             token_results = self.tokenizer(text, padding='max_length')
             token_ids = token_results.get('input_ids')
             segment_ids = token_results.get('token_type_ids')
             attention_mask = token_results.get('attention_mask')
             entity_vector = np.zeros((len(token_ids), len(self.categories), 2))
-            if company is not None:
-                company_ids = self.tokenizer(company).get('input_ids')
-                company_ids = company_ids[1:-1]
-                start_index, end_index = self.get_index(token_ids, company_ids)
-                class_id = self.categories.get('company')
-                entity_vector[start_index, class_id, 0] = 1
-                entity_vector[end_index, class_id, 1] = 1
-            if position is not None:
-                position_ids = self.tokenizer(position).get('input_ids')
-                position_ids = position_ids[1:-1]
-                start_index, end_index = self.get_index(token_ids, position_ids)
-                class_id = self.categories.get('position')
-                entity_vector[start_index, class_id, 0] = 1
-                entity_vector[end_index, class_id, 1] = 1
-            if detail is not None:
-                detail_ids = self.tokenizer(detail).get('input_ids')
-                detail_ids = detail_ids[1:-1]
-                start_index, end_index = self.get_index(token_ids, detail_ids)
-                class_id = self.categories.get('detail')
-                entity_vector[start_index, class_id, 0] = 1
-                entity_vector[end_index, class_id, 1] = 1
+            for classifier, classifier_id in self.categories.items():
+                item_text = item.get(classifier)
+                if item_text is not None:
+                    item_token = self.tokenizer(item_text).get('input_ids')
+                    item_token = item_token[1:-1]
+                    start_index, end_index = self.get_index(token_ids, item_token)
+                    entity_vector[start_index, classifier_id, 0] = 1
+                    entity_vector[end_index, classifier_id, 1] = 1
             sentence_vectors.append(token_ids)
             segment_vectors.append(segment_ids)
             attention_mask_vectors.append(attention_mask)
             entity_vectors.append(entity_vector)
-            # print(text)
-            # for item in zip(token_ids, entity_vectors):
-            #     print(item)
         sentence_vectors_np = np.array(sentence_vectors)
         segment_vectors_np = np.array(segment_vectors)
         attention_mask_vectors_np = np.array(attention_mask_vectors)
@@ -115,6 +96,3 @@ def collate_fn(data):
             'segment': torch.LongTensor(segment),
             'attention_mask': torch.LongTensor(attention_mask),
             'entity_vec': torch.LongTensor(entity_vec)}
-
-
-

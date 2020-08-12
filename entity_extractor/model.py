@@ -16,7 +16,6 @@ class Model(nn.Module, ABC):
         fc1_results = self.fc_1(layer_hidden)
         fc2_results = self.fc_2(fc1_results)
         output = self.sigmoid(fc2_results)
-        track_output = output ** 4
-        batch_size = track_output.size(0)
-        transfer_output = track_output.view(batch_size, -1, self.num_labels, 2)
+        batch_size = output.size(0)
+        transfer_output = output.view(batch_size, -1, self.num_labels, 2)
         return transfer_output

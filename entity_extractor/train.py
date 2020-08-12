@@ -16,9 +16,9 @@ if __name__ == '__main__':
     logger = get_logger(log_dir)
     model_dir = './model'
     train_data = json.load(open('./data/train_data.json', encoding='utf-8'))
-    dev_data = json.load(open('./data/dev_data_test.json', encoding='utf-8'))
+    dev_data = json.load(open('./data/dev_data.json', encoding='utf-8'))
     train_data_generator = DataGenerator(train_data, logger=logger)
-
+    logger.info('dev_data_length:{}\n'.format(len(dev_data)))
     sentence, segment, attention_mask, entity_vectors = train_data_generator.prepare_data()
     torch_dataset = MyDataset(sentence, segment, attention_mask, entity_vectors)
     loader = DataLoader(
@@ -28,7 +28,7 @@ if __name__ == '__main__':
         num_workers=0,
         collate_fn=collate_fn,  # subprocesses for loading data
     )
-    learning_rate = 4e-05
+    learning_rate = 1e-3
     adam_epsilon = 1e-05
     model = Model(hidden_size=768, num_labels=3).to(device)
     bert_model = BertModel.from_pretrained('bert-base-chinese').to(device)
@@ -58,8 +58,15 @@ if __name__ == '__main__':
             optimizer.step()
         model.eval()
         logger.info('start evaluate model...')
-        logger.info('dev_data_length:{}'.format(len(dev_data)))
-        f1, precision, recall = evaluate(bert_model, model, dev_data, device)
+        results_of_each_entity = evaluate(bert_model, model, dev_data, device)
+        f1 = 0.0
+        for classifier_id, performance in results_of_each_entity.items():
+            f1 += performance['f1']
+            # 打印每个类别的指标
+            logger.info('classifier_id: %d, precision: %.4f, recall: %.4f, f1: %.4f'
+                        % (classifier_id, performance['precision'], performance['recall'], performance['f1']))
+        # 这里算得是所有类别的平均f1值
+        f1 = f1 / len(results_of_each_entity)
         if f1 >= best_f1:
             best_f1 = f1
             best_epoch = i
@@ -67,6 +74,5 @@ if __name__ == '__main__':
             torch.save(model, os.path.join(model_dir, model_name))
             logger.info('saved ' + model_name + ' successful...')
         aver_loss = loss_sum / step
-        logger.info('aver_loss: %.4f, f1: %.4f, precision: %.4f, recall: %.4f, best_f1: %.4f, best_epoch: %d \n'
-                    % (aver_loss, f1, precision, recall, best_f1, best_epoch))
-
+        logger.info(
+            'aver_loss: %.4f, f1: %.4f, best_f1: %.4f, best_epoch: %d \n' % (aver_loss, f1, best_f1, best_epoch))
