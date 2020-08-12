@@ -45,14 +45,14 @@ class DataGenerator:
             segment_ids = token_results.get('token_type_ids')
             attention_mask = token_results.get('attention_mask')
             entity_vector = np.zeros((len(token_ids), len(self.categories), 2))
-            for classifier, classifier_id in self.categories.items():
-                item_text = item.get(classifier)
+            for class_name, class_id in self.categories.items():
+                item_text = item.get(class_name)
                 if item_text is not None:
                     item_token = self.tokenizer(item_text).get('input_ids')
                     item_token = item_token[1:-1]
                     start_index, end_index = self.get_index(token_ids, item_token)
-                    entity_vector[start_index, classifier_id, 0] = 1
-                    entity_vector[end_index, classifier_id, 1] = 1
+                    entity_vector[start_index, class_id, 0] = 1
+                    entity_vector[end_index, class_id, 1] = 1
             sentence_vectors.append(token_ids)
             segment_vectors.append(segment_ids)
             attention_mask_vectors.append(attention_mask)

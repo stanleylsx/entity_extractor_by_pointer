@@ -30,40 +30,43 @@ def extract_entities(tokenizer, text, bert_model, model, device):
 
 def evaluate(bert_model, model, dev_data, device):
     """
-    评估函数，计算f1、precision、recall
+    评估函数，分别计算每个类别的f1、precision、recall
     """
     categories = {'company': 0, 'position': 1, 'detail': 2}
+    reverse_categories = {class_id: class_name for class_name, class_id in categories.items()}
     tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
     counts = {}
     results_of_each_entity = {}
-    for classifier, classifier_id in categories.items():
-        counts[classifier_id] = {'A': 0.0, 'B': 1e-10, 'C': 1e-10}
-        results_of_each_entity[classifier_id] = {}
+    for class_name, class_id in categories.items():
+        counts[class_id] = {'A': 0.0, 'B': 1e-10, 'C': 1e-10}
+        class_name = reverse_categories[class_id]
+        results_of_each_entity[class_name] = {}
 
     for data_row in tqdm(iter(dev_data)):
         results = {}
         p_results = extract_entities(tokenizer, data_row.get('text'), bert_model, model, device)
-        for classifier, classifier_id in categories.items():
-            item_text = data_row.get(classifier)
+        for class_name, class_id in categories.items():
+            item_text = data_row.get(class_name)
             if item_text is not None:
-                results.setdefault(classifier_id, set()).add(re.sub(r'\s', '', item_text))
+                results.setdefault(class_id, set()).add(re.sub(r'\s', '', item_text))
             else:
-                results.setdefault(classifier_id, set())
+                results.setdefault(class_id, set())
 
-        for classifier_id, text_set in results.items():
-            p_text_set = p_results.get(classifier_id)
+        for class_id, text_set in results.items():
+            p_text_set = p_results.get(class_id)
             if p_text_set is None:
                 # 没预测出来
                 p_text_set = set()
             # 预测出来并且正确个数
-            counts[classifier_id]['A'] += len(p_text_set & text_set)
+            counts[class_id]['A'] += len(p_text_set & text_set)
             # 预测出来的结果个数
-            counts[classifier_id]['B'] += len(p_text_set)
+            counts[class_id]['B'] += len(p_text_set)
             # 真实的结果个数
-            counts[classifier_id]['C'] += len(text_set)
-    for classifier_id, count in counts.items():
+            counts[class_id]['C'] += len(text_set)
+    for class_id, count in counts.items():
         f1, precision, recall = 2 * count['A'] / (count['B'] + count['C']), count['A'] / count['B'], count['A'] / count['C']
-        results_of_each_entity[classifier_id]['f1'] = f1
-        results_of_each_entity[classifier_id]['precision'] = precision
-        results_of_each_entity[classifier_id]['recall'] = recall
+        class_name = reverse_categories[class_id]
+        results_of_each_entity[class_name]['f1'] = f1
+        results_of_each_entity[class_name]['precision'] = precision
+        results_of_each_entity[class_name]['recall'] = recall
     return results_of_each_entity

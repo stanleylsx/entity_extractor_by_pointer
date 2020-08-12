@@ -39,7 +39,7 @@ if __name__ == '__main__':
     best_epoch = 0
 
     for i in range(EPOCH_NUM):
-        logger.info('epoch:{}/{}'.format(i, EPOCH_NUM))
+        logger.info('epoch:{}/{}'.format(i + 1, EPOCH_NUM))
         step, loss, loss_sum = 0, 0.0, 0.0
         for step, loader_res in tqdm(iter(enumerate(loader))):
             sentences = loader_res['sentence'].to(device)
@@ -51,7 +51,6 @@ if __name__ == '__main__':
             loss = loss_function(model_output, entity_vec.float())
             loss = torch.sum(torch.mean(loss, 3), 2)
             loss = torch.sum(loss * attention_mask) / torch.sum(attention_mask)
-            # logger.info('loss in step {}:{}'.format(str(step), loss.item()))
             loss_sum += loss.item()
             optimizer.zero_grad()
             loss.backward()
@@ -60,11 +59,11 @@ if __name__ == '__main__':
         logger.info('start evaluate model...')
         results_of_each_entity = evaluate(bert_model, model, dev_data, device)
         f1 = 0.0
-        for classifier_id, performance in results_of_each_entity.items():
+        for class_id, performance in results_of_each_entity.items():
             f1 += performance['f1']
             # 打印每个类别的指标
-            logger.info('classifier_id: %d, precision: %.4f, recall: %.4f, f1: %.4f'
-                        % (classifier_id, performance['precision'], performance['recall'], performance['f1']))
+            logger.info('class_name: %s, precision: %.4f, recall: %.4f, f1: %.4f'
+                        % (class_id, performance['precision'], performance['recall'], performance['f1']))
         # 这里算得是所有类别的平均f1值
         f1 = f1 / len(results_of_each_entity)
         if f1 >= best_f1:

@@ -1,5 +1,0 @@
-2020-08-12 09:45:07
-train_data_length:4567,batch_size:128,steps in each epoch:35
-dev_data_length:508
-
-epoch:0/50
