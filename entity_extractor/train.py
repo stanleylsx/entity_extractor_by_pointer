@@ -68,7 +68,7 @@ if __name__ == '__main__':
         f1 = f1 / len(results_of_each_entity)
         if f1 >= best_f1:
             best_f1 = f1
-            best_epoch = i
+            best_epoch = i + 1
             model_name = 'model_' + str(i) + '.pkl'
             torch.save(model, os.path.join(model_dir, model_name))
             logger.info('saved ' + model_name + ' successful...')

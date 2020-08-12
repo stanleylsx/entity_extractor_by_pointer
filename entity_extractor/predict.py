@@ -22,8 +22,9 @@ def extract_entities(tokenizer, text, bert_model, model, device):
         for _start, predicate1 in zip(*start):
             for _end, predicate2 in zip(*end):
                 if _start <= _end and predicate1 == predicate2:
-                    _entity = tokenizer.decode(input_ids[_start: _end + 1])
-                    predict_results.setdefault(predicate1, set()).add(re.sub(r'\s', '', _entity))
+                    token_list = input_ids[_start: _end + 1]
+                    token_list = [token for token in token_list if token != 0]
+                    predict_results.setdefault(predicate1, set()).add(str(token_list))
                     break
     return predict_results
 
@@ -45,28 +46,34 @@ def evaluate(bert_model, model, dev_data, device):
     for data_row in tqdm(iter(dev_data)):
         results = {}
         p_results = extract_entities(tokenizer, data_row.get('text'), bert_model, model, device)
+        # with open('results.txt', 'a', encoding='utf-8') as result_file:
+        #     for class_id, p_token_set in p_results.items():
+        #         result_file.write('predict: 【' + str(class_id) + '】 ' + tokenizer.decode(eval(list(p_token_set)[0])) + '\n')
         for class_name, class_id in categories.items():
             item_text = data_row.get(class_name)
             if item_text is not None:
-                results.setdefault(class_id, set()).add(re.sub(r'\s', '', item_text))
+                item_token = tokenizer(item_text).get('input_ids')[1:-1]
+                results.setdefault(class_id, set()).add(str(item_token))
             else:
                 results.setdefault(class_id, set())
 
-        for class_id, text_set in results.items():
-            p_text_set = p_results.get(class_id)
-            if p_text_set is None:
+        for class_id, token_set in results.items():
+            p_token_set = p_results.get(class_id)
+            if p_token_set is None:
                 # 没预测出来
-                p_text_set = set()
+                p_token_set = set()
             # 预测出来并且正确个数
-            counts[class_id]['A'] += len(p_text_set & text_set)
+            counts[class_id]['A'] += len(p_token_set & token_set)
             # 预测出来的结果个数
-            counts[class_id]['B'] += len(p_text_set)
+            counts[class_id]['B'] += len(p_token_set)
             # 真实的结果个数
-            counts[class_id]['C'] += len(text_set)
+            counts[class_id]['C'] += len(token_set)
     for class_id, count in counts.items():
         f1, precision, recall = 2 * count['A'] / (count['B'] + count['C']), count['A'] / count['B'], count['A'] / count['C']
         class_name = reverse_categories[class_id]
         results_of_each_entity[class_name]['f1'] = f1
         results_of_each_entity[class_name]['precision'] = precision
         results_of_each_entity[class_name]['recall'] = recall
+    # with open('results.txt', 'a', encoding='utf-8') as result_file:
+    #     result_file.write('+++++++++++++++++++++++++++++++\n')
     return results_of_each_entity
