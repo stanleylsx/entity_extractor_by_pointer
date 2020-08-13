@@ -28,7 +28,8 @@ def train(configs, logger):
     )
     learning_rate = configs.learning_rate
     adam_epsilon = 1e-05
-    model = Model(hidden_size=768, num_labels=3).to(device)
+    num_labels = len(configs.class_name)
+    model = Model(hidden_size=768, num_labels=num_labels).to(device)
     bert_model = BertModel.from_pretrained('bert-base-chinese').to(device)
     params = list(model.parameters())
     optimizer = AdamW(params, lr=learning_rate, eps=adam_epsilon)
