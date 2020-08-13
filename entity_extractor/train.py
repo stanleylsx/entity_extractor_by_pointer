@@ -15,8 +15,8 @@ if __name__ == '__main__':
     log_dir = './log'
     logger = get_logger(log_dir)
     model_dir = './model'
-    train_data = json.load(open('./data/train_data.json', encoding='utf-8'))
-    dev_data = json.load(open('./data/dev_data.json', encoding='utf-8'))
+    train_data = json.load(open('data/example_datasets1/train_data.json', encoding='utf-8'))
+    dev_data = json.load(open('data/example_datasets1/dev_data.json', encoding='utf-8'))
     train_data_generator = DataGenerator(train_data, logger=logger)
     logger.info('dev_data_length:{}\n'.format(len(dev_data)))
     sentence, segment, attention_mask, entity_vectors = train_data_generator.prepare_data()
