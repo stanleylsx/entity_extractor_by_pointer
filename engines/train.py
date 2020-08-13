@@ -36,7 +36,7 @@ def train(configs, logger):
     loss_function = torch.nn.BCELoss(reduction='none')
     best_f1 = 0
     best_epoch = 0
-
+    unprocessed = 0
     for i in range(configs.epoch):
         logger.info('epoch:{}/{}'.format(i + 1, configs.epoch))
         step, loss, loss_sum = 0, 0.0, 0.0
@@ -65,7 +65,6 @@ def train(configs, logger):
                         % (class_id, performance['precision'], performance['recall'], performance['f1']))
         # 这里算得是所有类别的平均f1值
         f1 = f1 / len(results_of_each_entity)
-        unprocessed = 0
         if f1 >= best_f1:
             unprocessed = 0
             best_f1 = f1
