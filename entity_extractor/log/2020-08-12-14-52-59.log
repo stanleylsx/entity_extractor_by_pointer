@@ -1,0 +1,374 @@
+2020-08-12 14:52:59
+train_data_length:4567,batch_size:128,steps in each epoch:35
+dev_data_length:508
+
+epoch:1/50
+start evaluate model...
+class_name: company, precision: 0.9730, recall: 0.2156, f1: 0.3529
+class_name: position, precision: 0.8043, recall: 0.1477, f1: 0.2496
+class_name: detail, precision: 0.8596, recall: 0.6870, f1: 0.7637
+saved model_0.pkl successful...
+aver_loss: 0.1373, f1: 0.4554, best_f1: 0.4554, best_epoch: 1 
+
+epoch:2/50
+start evaluate model...
+class_name: company, precision: 0.9012, recall: 0.7645, f1: 0.8272
+class_name: position, precision: 0.8207, recall: 0.6487, f1: 0.7246
+class_name: detail, precision: 0.8568, recall: 0.8012, f1: 0.8281
+saved model_1.pkl successful...
+aver_loss: 0.0138, f1: 0.7933, best_f1: 0.7933, best_epoch: 2 
+
+epoch:3/50
+start evaluate model...
+class_name: company, precision: 0.9095, recall: 0.8024, f1: 0.8526
+class_name: position, precision: 0.8670, recall: 0.7804, f1: 0.8214
+class_name: detail, precision: 0.9038, recall: 0.8504, f1: 0.8763
+saved model_2.pkl successful...
+aver_loss: 0.0082, f1: 0.8501, best_f1: 0.8501, best_epoch: 3 
+
+epoch:4/50
+start evaluate model...
+class_name: company, precision: 0.9386, recall: 0.8244, f1: 0.8778
+class_name: position, precision: 0.8659, recall: 0.8503, f1: 0.8580
+class_name: detail, precision: 0.9172, recall: 0.8720, f1: 0.8940
+saved model_3.pkl successful...
+aver_loss: 0.0060, f1: 0.8766, best_f1: 0.8766, best_epoch: 4 
+
+epoch:5/50
+start evaluate model...
+class_name: company, precision: 0.9541, recall: 0.8723, f1: 0.9114
+class_name: position, precision: 0.9021, recall: 0.8643, f1: 0.8828
+class_name: detail, precision: 0.9374, recall: 0.9134, f1: 0.9252
+saved model_4.pkl successful...
+aver_loss: 0.0047, f1: 0.9065, best_f1: 0.9065, best_epoch: 5 
+
+epoch:6/50
+start evaluate model...
+class_name: company, precision: 0.9593, recall: 0.8942, f1: 0.9256
+class_name: position, precision: 0.9121, recall: 0.8902, f1: 0.9010
+class_name: detail, precision: 0.9484, recall: 0.9409, f1: 0.9447
+saved model_5.pkl successful...
+aver_loss: 0.0038, f1: 0.9238, best_f1: 0.9238, best_epoch: 6 
+
+epoch:7/50
+start evaluate model...
+class_name: company, precision: 0.9660, recall: 0.9082, f1: 0.9362
+class_name: position, precision: 0.9138, recall: 0.9102, f1: 0.9120
+class_name: detail, precision: 0.9659, recall: 0.9469, f1: 0.9563
+saved model_6.pkl successful...
+aver_loss: 0.0032, f1: 0.9348, best_f1: 0.9348, best_epoch: 7 
+
+epoch:8/50
+start evaluate model...
+class_name: company, precision: 0.9626, recall: 0.9242, f1: 0.9430
+class_name: position, precision: 0.9141, recall: 0.9341, f1: 0.9240
+class_name: detail, precision: 0.9627, recall: 0.9665, f1: 0.9646
+saved model_7.pkl successful...
+aver_loss: 0.0028, f1: 0.9439, best_f1: 0.9439, best_epoch: 8 
+
+epoch:9/50
+start evaluate model...
+class_name: company, precision: 0.9729, recall: 0.9301, f1: 0.9510
+class_name: position, precision: 0.9176, recall: 0.9341, f1: 0.9258
+class_name: detail, precision: 0.9667, recall: 0.9724, f1: 0.9696
+saved model_8.pkl successful...
+aver_loss: 0.0025, f1: 0.9488, best_f1: 0.9488, best_epoch: 9 
+
+epoch:10/50
+start evaluate model...
+class_name: company, precision: 0.9652, recall: 0.9421, f1: 0.9535
+class_name: position, precision: 0.9000, recall: 0.9341, f1: 0.9167
+class_name: detail, precision: 0.9630, recall: 0.9744, f1: 0.9687
+aver_loss: 0.0022, f1: 0.9463, best_f1: 0.9488, best_epoch: 9 
+
+epoch:11/50
+start evaluate model...
+class_name: company, precision: 0.9693, recall: 0.9461, f1: 0.9576
+class_name: position, precision: 0.8981, recall: 0.9321, f1: 0.9148
+class_name: detail, precision: 0.9670, recall: 0.9803, f1: 0.9736
+aver_loss: 0.0020, f1: 0.9487, best_f1: 0.9488, best_epoch: 9 
+
+epoch:12/50
+start evaluate model...
+class_name: company, precision: 0.9793, recall: 0.9421, f1: 0.9603
+class_name: position, precision: 0.9035, recall: 0.9341, f1: 0.9185
+class_name: detail, precision: 0.9783, recall: 0.9783, f1: 0.9783
+saved model_11.pkl successful...
+aver_loss: 0.0018, f1: 0.9524, best_f1: 0.9524, best_epoch: 12 
+
+epoch:13/50
+start evaluate model...
+class_name: company, precision: 0.9774, recall: 0.9481, f1: 0.9625
+class_name: position, precision: 0.9216, recall: 0.9381, f1: 0.9298
+class_name: detail, precision: 0.9708, recall: 0.9823, f1: 0.9765
+saved model_12.pkl successful...
+aver_loss: 0.0016, f1: 0.9563, best_f1: 0.9563, best_epoch: 13 
+
+epoch:14/50
+start evaluate model...
+class_name: company, precision: 0.9795, recall: 0.9541, f1: 0.9666
+class_name: position, precision: 0.9060, recall: 0.9421, f1: 0.9237
+class_name: detail, precision: 0.9747, recall: 0.9862, f1: 0.9804
+saved model_13.pkl successful...
+aver_loss: 0.0015, f1: 0.9569, best_f1: 0.9569, best_epoch: 14 
+
+epoch:15/50
+start evaluate model...
+class_name: company, precision: 0.9835, recall: 0.9541, f1: 0.9686
+class_name: position, precision: 0.9130, recall: 0.9421, f1: 0.9273
+class_name: detail, precision: 0.9710, recall: 0.9882, f1: 0.9795
+saved model_14.pkl successful...
+aver_loss: 0.0014, f1: 0.9585, best_f1: 0.9585, best_epoch: 15 
+
+epoch:16/50
+start evaluate model...
+class_name: company, precision: 0.9817, recall: 0.9641, f1: 0.9728
+class_name: position, precision: 0.9273, recall: 0.9421, f1: 0.9347
+class_name: detail, precision: 0.9748, recall: 0.9902, f1: 0.9824
+saved model_15.pkl successful...
+aver_loss: 0.0013, f1: 0.9633, best_f1: 0.9633, best_epoch: 16 
+
+epoch:17/50
+start evaluate model...
+class_name: company, precision: 0.9897, recall: 0.9581, f1: 0.9736
+class_name: position, precision: 0.9222, recall: 0.9461, f1: 0.9340
+class_name: detail, precision: 0.9691, recall: 0.9882, f1: 0.9786
+aver_loss: 0.0012, f1: 0.9621, best_f1: 0.9633, best_epoch: 16 
+
+epoch:18/50
+start evaluate model...
+class_name: company, precision: 0.9837, recall: 0.9641, f1: 0.9738
+class_name: position, precision: 0.9021, recall: 0.9561, f1: 0.9283
+class_name: detail, precision: 0.9673, recall: 0.9902, f1: 0.9786
+aver_loss: 0.0011, f1: 0.9602, best_f1: 0.9633, best_epoch: 16 
+
+epoch:19/50
+start evaluate model...
+class_name: company, precision: 0.9877, recall: 0.9641, f1: 0.9758
+class_name: position, precision: 0.9195, recall: 0.9581, f1: 0.9384
+class_name: detail, precision: 0.9710, recall: 0.9902, f1: 0.9805
+saved model_18.pkl successful...
+aver_loss: 0.0010, f1: 0.9649, best_f1: 0.9649, best_epoch: 19 
+
+epoch:20/50
+start evaluate model...
+class_name: company, precision: 0.9877, recall: 0.9641, f1: 0.9758
+class_name: position, precision: 0.9043, recall: 0.9621, f1: 0.9323
+class_name: detail, precision: 0.9673, recall: 0.9902, f1: 0.9786
+aver_loss: 0.0010, f1: 0.9622, best_f1: 0.9649, best_epoch: 19 
+
+epoch:21/50
+start evaluate model...
+class_name: company, precision: 0.9858, recall: 0.9681, f1: 0.9768
+class_name: position, precision: 0.9041, recall: 0.9601, f1: 0.9313
+class_name: detail, precision: 0.9692, recall: 0.9921, f1: 0.9805
+aver_loss: 0.0009, f1: 0.9629, best_f1: 0.9649, best_epoch: 19 
+
+epoch:22/50
+start evaluate model...
+class_name: company, precision: 0.9857, recall: 0.9661, f1: 0.9758
+class_name: position, precision: 0.9096, recall: 0.9441, f1: 0.9265
+class_name: detail, precision: 0.9692, recall: 0.9921, f1: 0.9805
+aver_loss: 0.0009, f1: 0.9610, best_f1: 0.9649, best_epoch: 19 
+
+epoch:23/50
+start evaluate model...
+class_name: company, precision: 0.9857, recall: 0.9661, f1: 0.9758
+class_name: position, precision: 0.9250, recall: 0.9601, f1: 0.9422
+class_name: detail, precision: 0.9674, recall: 0.9921, f1: 0.9796
+saved model_22.pkl successful...
+aver_loss: 0.0008, f1: 0.9659, best_f1: 0.9659, best_epoch: 23 
+
+epoch:24/50
+start evaluate model...
+class_name: company, precision: 0.9878, recall: 0.9661, f1: 0.9768
+class_name: position, precision: 0.9058, recall: 0.9601, f1: 0.9322
+class_name: detail, precision: 0.9674, recall: 0.9921, f1: 0.9796
+aver_loss: 0.0008, f1: 0.9629, best_f1: 0.9659, best_epoch: 23 
+
+epoch:25/50
+start evaluate model...
+class_name: company, precision: 0.9858, recall: 0.9701, f1: 0.9779
+class_name: position, precision: 0.9038, recall: 0.9561, f1: 0.9292
+class_name: detail, precision: 0.9711, recall: 0.9921, f1: 0.9815
+aver_loss: 0.0007, f1: 0.9629, best_f1: 0.9659, best_epoch: 23 
+
+epoch:26/50
+start evaluate model...
+class_name: company, precision: 0.9859, recall: 0.9741, f1: 0.9799
+class_name: position, precision: 0.9132, recall: 0.9661, f1: 0.9389
+class_name: detail, precision: 0.9674, recall: 0.9941, f1: 0.9806
+saved model_25.pkl successful...
+aver_loss: 0.0007, f1: 0.9665, best_f1: 0.9665, best_epoch: 26 
+
+epoch:27/50
+start evaluate model...
+class_name: company, precision: 0.9898, recall: 0.9661, f1: 0.9778
+class_name: position, precision: 0.9105, recall: 0.9541, f1: 0.9318
+class_name: detail, precision: 0.9767, recall: 0.9921, f1: 0.9844
+aver_loss: 0.0007, f1: 0.9646, best_f1: 0.9665, best_epoch: 26 
+
+epoch:28/50
+start evaluate model...
+class_name: company, precision: 0.9898, recall: 0.9681, f1: 0.9788
+class_name: position, precision: 0.8963, recall: 0.9661, f1: 0.9299
+class_name: detail, precision: 0.9619, recall: 0.9941, f1: 0.9777
+aver_loss: 0.0007, f1: 0.9621, best_f1: 0.9665, best_epoch: 26 
+
+epoch:29/50
+start evaluate model...
+class_name: company, precision: 0.9898, recall: 0.9721, f1: 0.9809
+class_name: position, precision: 0.9108, recall: 0.9581, f1: 0.9339
+class_name: detail, precision: 0.9749, recall: 0.9921, f1: 0.9834
+aver_loss: 0.0006, f1: 0.9660, best_f1: 0.9665, best_epoch: 26 
+
+epoch:30/50
+start evaluate model...
+class_name: company, precision: 0.9898, recall: 0.9681, f1: 0.9788
+class_name: position, precision: 0.9065, recall: 0.9681, f1: 0.9363
+class_name: detail, precision: 0.9711, recall: 0.9921, f1: 0.9815
+aver_loss: 0.0006, f1: 0.9655, best_f1: 0.9665, best_epoch: 26 
+
+epoch:31/50
+start evaluate model...
+class_name: company, precision: 0.9898, recall: 0.9701, f1: 0.9798
+class_name: position, precision: 0.9179, recall: 0.9601, f1: 0.9385
+class_name: detail, precision: 0.9730, recall: 0.9941, f1: 0.9834
+saved model_30.pkl successful...
+aver_loss: 0.0006, f1: 0.9673, best_f1: 0.9673, best_epoch: 31 
+
+epoch:32/50
+start evaluate model...
+class_name: company, precision: 0.9858, recall: 0.9701, f1: 0.9779
+class_name: position, precision: 0.9017, recall: 0.9701, f1: 0.9346
+class_name: detail, precision: 0.9693, recall: 0.9941, f1: 0.9815
+aver_loss: 0.0006, f1: 0.9647, best_f1: 0.9673, best_epoch: 31 
+
+epoch:33/50
+start evaluate model...
+class_name: company, precision: 0.9859, recall: 0.9800, f1: 0.9830
+class_name: position, precision: 0.8978, recall: 0.9641, f1: 0.9297
+class_name: detail, precision: 0.9731, recall: 0.9961, f1: 0.9844
+aver_loss: 0.0005, f1: 0.9657, best_f1: 0.9673, best_epoch: 31 
+
+epoch:34/50
+start evaluate model...
+class_name: company, precision: 0.9898, recall: 0.9641, f1: 0.9767
+class_name: position, precision: 0.9057, recall: 0.9581, f1: 0.9311
+class_name: detail, precision: 0.9787, recall: 0.9941, f1: 0.9863
+aver_loss: 0.0005, f1: 0.9647, best_f1: 0.9673, best_epoch: 31 
+
+epoch:35/50
+start evaluate model...
+class_name: company, precision: 0.9918, recall: 0.9601, f1: 0.9757
+class_name: position, precision: 0.8965, recall: 0.9681, f1: 0.9309
+class_name: detail, precision: 0.9730, recall: 0.9941, f1: 0.9834
+aver_loss: 0.0005, f1: 0.9633, best_f1: 0.9673, best_epoch: 31 
+
+epoch:36/50
+start evaluate model...
+class_name: company, precision: 0.9918, recall: 0.9661, f1: 0.9788
+class_name: position, precision: 0.8909, recall: 0.9621, f1: 0.9251
+class_name: detail, precision: 0.9712, recall: 0.9961, f1: 0.9835
+aver_loss: 0.0005, f1: 0.9625, best_f1: 0.9673, best_epoch: 31 
+
+epoch:37/50
+start evaluate model...
+class_name: company, precision: 0.9837, recall: 0.9661, f1: 0.9748
+class_name: position, precision: 0.9191, recall: 0.9521, f1: 0.9353
+class_name: detail, precision: 0.9750, recall: 0.9961, f1: 0.9854
+aver_loss: 0.0004, f1: 0.9652, best_f1: 0.9673, best_epoch: 31 
+
+epoch:38/50
+start evaluate model...
+class_name: company, precision: 0.9820, recall: 0.9800, f1: 0.9810
+class_name: position, precision: 0.9162, recall: 0.9601, f1: 0.9376
+class_name: detail, precision: 0.9750, recall: 0.9961, f1: 0.9854
+saved model_37.pkl successful...
+aver_loss: 0.0005, f1: 0.9680, best_f1: 0.9680, best_epoch: 38 
+
+epoch:39/50
+start evaluate model...
+class_name: company, precision: 0.9859, recall: 0.9800, f1: 0.9830
+class_name: position, precision: 0.9195, recall: 0.9581, f1: 0.9384
+class_name: detail, precision: 0.9713, recall: 0.9980, f1: 0.9845
+saved model_38.pkl successful...
+aver_loss: 0.0004, f1: 0.9686, best_f1: 0.9686, best_epoch: 39 
+
+epoch:40/50
+start evaluate model...
+class_name: company, precision: 0.9859, recall: 0.9800, f1: 0.9830
+class_name: position, precision: 0.8895, recall: 0.9641, f1: 0.9253
+class_name: detail, precision: 0.9693, recall: 0.9961, f1: 0.9825
+aver_loss: 0.0004, f1: 0.9636, best_f1: 0.9686, best_epoch: 39 
+
+epoch:41/50
+start evaluate model...
+class_name: company, precision: 0.9839, recall: 0.9780, f1: 0.9810
+class_name: position, precision: 0.8979, recall: 0.9481, f1: 0.9223
+class_name: detail, precision: 0.9750, recall: 0.9980, f1: 0.9864
+aver_loss: 0.0004, f1: 0.9632, best_f1: 0.9686, best_epoch: 39 
+
+epoch:42/50
+start evaluate model...
+class_name: company, precision: 0.9859, recall: 0.9760, f1: 0.9809
+class_name: position, precision: 0.9028, recall: 0.9641, f1: 0.9324
+class_name: detail, precision: 0.9750, recall: 0.9980, f1: 0.9864
+aver_loss: 0.0004, f1: 0.9666, best_f1: 0.9686, best_epoch: 39 
+
+epoch:43/50
+start evaluate model...
+class_name: company, precision: 0.9877, recall: 0.9641, f1: 0.9758
+class_name: position, precision: 0.9024, recall: 0.9601, f1: 0.9304
+class_name: detail, precision: 0.9713, recall: 0.9980, f1: 0.9845
+aver_loss: 0.0004, f1: 0.9635, best_f1: 0.9686, best_epoch: 39 
+
+epoch:44/50
+start evaluate model...
+class_name: company, precision: 0.9840, recall: 0.9840, f1: 0.9840
+class_name: position, precision: 0.8955, recall: 0.9581, f1: 0.9257
+class_name: detail, precision: 0.9712, recall: 0.9961, f1: 0.9835
+aver_loss: 0.0004, f1: 0.9644, best_f1: 0.9686, best_epoch: 39 
+
+epoch:45/50
+start evaluate model...
+class_name: company, precision: 0.9859, recall: 0.9780, f1: 0.9820
+class_name: position, precision: 0.8848, recall: 0.9661, f1: 0.9237
+class_name: detail, precision: 0.9712, recall: 0.9961, f1: 0.9835
+aver_loss: 0.0004, f1: 0.9630, best_f1: 0.9686, best_epoch: 39 
+
+epoch:46/50
+start evaluate model...
+class_name: company, precision: 0.9859, recall: 0.9780, f1: 0.9820
+class_name: position, precision: 0.9075, recall: 0.9401, f1: 0.9235
+class_name: detail, precision: 0.9826, recall: 0.9980, f1: 0.9902
+aver_loss: 0.0004, f1: 0.9652, best_f1: 0.9686, best_epoch: 39 
+
+epoch:47/50
+start evaluate model...
+class_name: company, precision: 0.9898, recall: 0.9721, f1: 0.9809
+class_name: position, precision: 0.8721, recall: 0.9661, f1: 0.9167
+class_name: detail, precision: 0.9676, recall: 0.9980, f1: 0.9826
+aver_loss: 0.0004, f1: 0.9600, best_f1: 0.9686, best_epoch: 39 
+
+epoch:48/50
+start evaluate model...
+class_name: company, precision: 0.9859, recall: 0.9780, f1: 0.9820
+class_name: position, precision: 0.8879, recall: 0.9641, f1: 0.9244
+class_name: detail, precision: 0.9731, recall: 0.9980, f1: 0.9854
+aver_loss: 0.0003, f1: 0.9639, best_f1: 0.9686, best_epoch: 39 
+
+epoch:49/50
+start evaluate model...
+class_name: company, precision: 0.9859, recall: 0.9760, f1: 0.9809
+class_name: position, precision: 0.8817, recall: 0.9521, f1: 0.9155
+class_name: detail, precision: 0.9713, recall: 0.9980, f1: 0.9845
+aver_loss: 0.0003, f1: 0.9603, best_f1: 0.9686, best_epoch: 39 
+
+epoch:50/50
+start evaluate model...
+class_name: company, precision: 0.9899, recall: 0.9800, f1: 0.9850
+class_name: position, precision: 0.8897, recall: 0.9661, f1: 0.9263
+class_name: detail, precision: 0.9750, recall: 0.9980, f1: 0.9864
+aver_loss: 0.0004, f1: 0.9659, best_f1: 0.9686, best_epoch: 39 
+

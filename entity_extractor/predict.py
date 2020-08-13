@@ -1,7 +1,6 @@
 from tqdm import tqdm
 from transformers import BertTokenizer
 import torch
-import re
 import numpy as np
 
 
@@ -46,9 +45,6 @@ def evaluate(bert_model, model, dev_data, device):
     for data_row in tqdm(iter(dev_data)):
         results = {}
         p_results = extract_entities(tokenizer, data_row.get('text'), bert_model, model, device)
-        # with open('results.txt', 'a', encoding='utf-8') as result_file:
-        #     for class_id, p_token_set in p_results.items():
-        #         result_file.write('predict: 【' + str(class_id) + '】 ' + tokenizer.decode(eval(list(p_token_set)[0])) + '\n')
         for class_name, class_id in categories.items():
             item_text = data_row.get(class_name)
             if item_text is not None:
@@ -74,6 +70,4 @@ def evaluate(bert_model, model, dev_data, device):
         results_of_each_entity[class_name]['f1'] = f1
         results_of_each_entity[class_name]['precision'] = precision
         results_of_each_entity[class_name]['recall'] = recall
-    # with open('results.txt', 'a', encoding='utf-8') as result_file:
-    #     result_file.write('+++++++++++++++++++++++++++++++\n')
     return results_of_each_entity
