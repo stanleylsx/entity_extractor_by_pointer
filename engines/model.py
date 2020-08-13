@@ -14,7 +14,7 @@ class Model(nn.Module, ABC):
     def forward(self, bert_hidden_states):
         layer_hidden = self.layer_norm(bert_hidden_states)
         fc1_results = self.fc_1(layer_hidden)
-        # fc1_results = self.fc_1(fc1_results)
+        fc1_results = self.fc_1(fc1_results)
         fc2_results = self.fc_2(fc1_results)
         output = self.sigmoid(fc2_results)
         batch_size = output.size(0)
