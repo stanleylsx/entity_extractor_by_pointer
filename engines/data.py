@@ -4,18 +4,15 @@ import torch
 import numpy as np
 import re
 
-BATCH_SIZE = 128
-EPOCH_NUM = 50
-
 
 class DataGenerator:
-    def __init__(self, data, logger, batch_size=BATCH_SIZE):
+    def __init__(self, configs, data, logger):
         self.data = data
-        self.batch_size = batch_size
+        self.batch_size = configs.batch_size
         logger.info('train_data_length:{},batch_size:{},steps in each epoch:{}'
-                    .format(len(data), BATCH_SIZE, len(data)//BATCH_SIZE))
-        assert len(data) >= batch_size, '数据量不够一个批次'
-        self.categories = {'company': 0, 'position': 1, 'detail': 2}
+                    .format(len(data), self.batch_size, len(data)//self.batch_size))
+        assert len(data) >= self.batch_size, '数据量不够一个批次'
+        self.categories = {configs.class_name[index]: index for index in range(0, len(configs.class_name))}
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
         self.steps = len(self.data) // self.batch_size
         if len(self.data) % self.batch_size != 0:

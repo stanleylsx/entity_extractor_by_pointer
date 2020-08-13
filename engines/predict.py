@@ -28,11 +28,11 @@ def extract_entities(tokenizer, text, bert_model, model, device):
     return predict_results
 
 
-def evaluate(bert_model, model, dev_data, device):
+def evaluate(configs, bert_model, model, dev_data, device):
     """
     评估函数，分别计算每个类别的f1、precision、recall
     """
-    categories = {'company': 0, 'position': 1, 'detail': 2}
+    categories = {configs.class_name[index]: index for index in range(0, len(configs.class_name))}
     reverse_categories = {class_id: class_name for class_name, class_id in categories.items()}
     tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
     counts = {}
