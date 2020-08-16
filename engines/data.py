@@ -42,18 +42,31 @@ class DataGenerator:
             segment_ids = token_results.get('token_type_ids')
             attention_mask = token_results.get('attention_mask')
             entity_vector = np.zeros((len(token_ids), len(self.categories), 2))
-            for class_name, class_id in self.categories.items():
-                item_text = item.get(class_name)
-                if item_text is not None:
-                    item_token = self.tokenizer(item_text).get('input_ids')
-                    item_token = item_token[1:-1]
-                    start_index, end_index = self.get_index(token_ids, item_token)
-                    entity_vector[start_index, class_id, 0] = 1
-                    entity_vector[end_index, class_id, 1] = 1
-            sentence_vectors.append(token_ids)
-            segment_vectors.append(segment_ids)
-            attention_mask_vectors.append(attention_mask)
-            entity_vectors.append(entity_vector)
+            try:
+                for class_name, class_id in self.categories.items():
+                    item_text = item.get(class_name)
+                    if item_text is not None:
+                        if type(item_text) is str:
+                            item_token = self.tokenizer(item_text).get('input_ids')
+                            item_token = item_token[1:-1]
+                            start_index, end_index = self.get_index(token_ids, item_token)
+                            entity_vector[start_index, class_id, 0] = 1
+                            entity_vector[end_index, class_id, 1] = 1
+                        elif type(item_text) is list:
+                            for sub_item in item_text:
+                                item_token = self.tokenizer(sub_item).get('input_ids')
+                                item_token = item_token[1:-1]
+                                start_index, end_index = self.get_index(token_ids, item_token)
+                                entity_vector[start_index, class_id, 0] = 1
+                                entity_vector[end_index, class_id, 1] = 1
+            except AttributeError:
+                print(item)
+                continue
+            else:
+                sentence_vectors.append(token_ids)
+                segment_vectors.append(segment_ids)
+                attention_mask_vectors.append(attention_mask)
+                entity_vectors.append(entity_vector)
         sentence_vectors_np = np.array(sentence_vectors)
         segment_vectors_np = np.array(segment_vectors)
         attention_mask_vectors_np = np.array(attention_mask_vectors)

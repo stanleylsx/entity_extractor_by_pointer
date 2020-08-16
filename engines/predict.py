@@ -48,8 +48,13 @@ def evaluate(configs, bert_model, model, dev_data, device):
         for class_name, class_id in categories.items():
             item_text = data_row.get(class_name)
             if item_text is not None:
-                item_token = tokenizer(item_text).get('input_ids')[1:-1]
-                results.setdefault(class_id, set()).add(str(item_token))
+                if type(item_text) is str:
+                    item_token = tokenizer(item_text).get('input_ids')[1:-1]
+                    results.setdefault(class_id, set()).add(str(item_token))
+                elif type(item_text) is list:
+                    for sub_item in item_text:
+                        item_token = tokenizer(sub_item).get('input_ids')[1:-1]
+                        results.setdefault(class_id, set()).add(str(item_token))
             else:
                 results.setdefault(class_id, set())
 
