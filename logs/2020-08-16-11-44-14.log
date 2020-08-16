@@ -1,0 +1,95 @@
+2020-08-16 11:44:14
+++++++++++++++++++++++++++++++++++++++++CONFIGURATION SUMMARY++++++++++++++++++++++++++++++++++++++++
+ Status:
+     mode                 : train
+ ++++++++++++++++++++++++++++++++++++++++
+ Datasets:
+     datasets         fold: data/example_datasets2
+     train            file: train_data.json
+     validation       file: dev_data.json
+     test             file: None
+     checkpoints       dir: models
+     log               dir: logs
+ ++++++++++++++++++++++++++++++++++++++++
+Labeling Scheme:
+     classnames     scheme: ['person', 'location', 'organization']
+ ++++++++++++++++++++++++++++++++++++++++
+ Training Settings:
+     epoch                : 50
+     batch            size: 128
+     dropout              : 0.5
+     learning         rate: 0.001
+     is     early     stop: True
+     patient              : 5
+++++++++++++++++++++++++++++++++++++++++CONFIGURATION SUMMARY END++++++++++++++++++++++++++++++++++++++++
+mode: train
+train_data_length:23180,batch_size:128,steps in each epoch:181
+dev_data_length:4636
+
+epoch:1/50
+start evaluate engines...
+class_name: person, precision: 0.7592, recall: 0.8373, f1: 0.7963
+class_name: location, precision: 0.7935, recall: 0.4320, f1: 0.5594
+class_name: organization, precision: 0.6963, recall: 0.5053, f1: 0.5857
+saved model_0.pkl successful...
+aver_loss: 0.0728, f1: 0.6471, best_f1: 0.6471, best_epoch: 1 
+
+epoch:2/50
+start evaluate engines...
+class_name: person, precision: 0.7651, recall: 0.8429, f1: 0.8022
+class_name: location, precision: 0.7925, recall: 0.6141, f1: 0.6920
+class_name: organization, precision: 0.7361, recall: 0.4767, f1: 0.5787
+saved model_1.pkl successful...
+aver_loss: 0.0310, f1: 0.6909, best_f1: 0.6909, best_epoch: 2 
+
+epoch:3/50
+start evaluate engines...
+class_name: person, precision: 0.7458, recall: 0.9034, f1: 0.8171
+class_name: location, precision: 0.7339, recall: 0.6647, f1: 0.6976
+class_name: organization, precision: 0.6643, recall: 0.6359, f1: 0.6498
+saved model_2.pkl successful...
+aver_loss: 0.0290, f1: 0.7215, best_f1: 0.7215, best_epoch: 3 
+
+epoch:4/50
+start evaluate engines...
+class_name: person, precision: 0.7236, recall: 0.9006, f1: 0.8024
+class_name: location, precision: 0.7609, recall: 0.6644, f1: 0.7094
+class_name: organization, precision: 0.7331, recall: 0.5039, f1: 0.5972
+aver_loss: 0.0285, f1: 0.7030, best_f1: 0.7215, best_epoch: 3 
+
+epoch:5/50
+start evaluate engines...
+class_name: person, precision: 0.7230, recall: 0.8921, f1: 0.7987
+class_name: location, precision: 0.7588, recall: 0.7094, f1: 0.7333
+class_name: organization, precision: 0.7196, recall: 0.5257, f1: 0.6076
+aver_loss: 0.0279, f1: 0.7132, best_f1: 0.7215, best_epoch: 3 
+
+epoch:6/50
+start evaluate engines...
+class_name: person, precision: 0.6984, recall: 0.9198, f1: 0.7940
+class_name: location, precision: 0.8089, recall: 0.5523, f1: 0.6564
+class_name: organization, precision: 0.7156, recall: 0.5461, f1: 0.6195
+aver_loss: 0.0277, f1: 0.6899, best_f1: 0.7215, best_epoch: 3 
+
+epoch:7/50
+start evaluate engines...
+class_name: person, precision: 0.7317, recall: 0.9169, f1: 0.8139
+class_name: location, precision: 0.8070, recall: 0.5950, f1: 0.6850
+class_name: organization, precision: 0.7187, recall: 0.4874, f1: 0.5809
+aver_loss: 0.0278, f1: 0.6932, best_f1: 0.7215, best_epoch: 3 
+
+epoch:8/50
+start evaluate engines...
+class_name: person, precision: 0.7169, recall: 0.9169, f1: 0.8047
+class_name: location, precision: 0.7580, recall: 0.4993, f1: 0.6021
+class_name: organization, precision: 0.7822, recall: 0.3922, f1: 0.5225
+aver_loss: 0.0279, f1: 0.6431, best_f1: 0.7215, best_epoch: 3 
+
+epoch:9/50
+start evaluate engines...
+class_name: person, precision: 0.7144, recall: 0.9130, f1: 0.8016
+class_name: location, precision: 0.7809, recall: 0.6561, f1: 0.7131
+class_name: organization, precision: 0.7595, recall: 0.5044, f1: 0.6062
+aver_loss: 0.0274, f1: 0.7070, best_f1: 0.7215, best_epoch: 3 
+
+early stopped, no progress obtained within 9 epochs
