@@ -41,7 +41,7 @@ class_name=[a,b,c]
 
 ![example_datasets1](img/image02.png)
 
-这里的数据模式比较简单，比较容易达到验证机拟合状态
+这里的数据模式比较简单，比较容易达到验证集拟合状态
 
 * example_datasets2
 
