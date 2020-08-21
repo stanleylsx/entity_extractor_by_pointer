@@ -60,7 +60,6 @@ class DataGenerator:
                                 entity_vector[start_index, class_id, 0] = 1
                                 entity_vector[end_index, class_id, 1] = 1
             except AttributeError:
-                print(item)
                 continue
             else:
                 sentence_vectors.append(token_ids)
