@@ -69,7 +69,7 @@ def train(configs, logger):
             unprocessed = 0
             best_f1 = f1
             best_epoch = i + 1
-            model_name = 'model_' + str(i) + '.pkl'
+            model_name = 'model_' + str(i + 1) + '.pkl'
             torch.save(model, os.path.join(configs.checkpoints_dir, model_name))
             logger.info('saved ' + model_name + ' successful...')
         else:
