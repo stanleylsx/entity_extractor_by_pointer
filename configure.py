@@ -37,6 +37,10 @@ class Configure:
         if the_item in config:
             self.class_name = config[the_item]
 
+        the_item = 'decision_threshold'
+        if the_item in config:
+            self.decision_threshold = config[the_item]
+
         # Training Settings:
         the_item = 'is_early_stop'
         if the_item in config:
@@ -106,6 +110,7 @@ class Configure:
         logger.info(' ' + '++' * 20)
         logger.info('Labeling Scheme:')
         logger.info('     classnames     scheme: {}'.format(self.class_name))
+        logger.info('     decision    threshold: {}'.format(self.decision_threshold))
         logger.info(' ' + '++' * 20)
         logger.info(' Training Settings:')
         logger.info('     epoch                : {}'.format(self.epoch))

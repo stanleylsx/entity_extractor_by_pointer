@@ -15,11 +15,12 @@ def extract_entities(configs, tokenizer, text, bert_model, model, device, mode='
     attention_mask = torch.unsqueeze(torch.LongTensor(token_results.get('attention_mask')), 0).to(device)
     bert_hidden_states = bert_model(token_ids, attention_mask=attention_mask)[0].to(device)
     model_outputs = model(bert_hidden_states).detach().to('cpu')
+    decision_threshold = float(configs.decision_threshold)
     categories = {configs.class_name[index]: index for index in range(0, len(configs.class_name))}
     reverse_categories = {class_id: class_name for class_name, class_id in categories.items()}
     for model_output in model_outputs:
-        start = np.where(model_output[:, :, 0] > 0.5)
-        end = np.where(model_output[:, :, 1] > 0.5)
+        start = np.where(model_output[:, :, 0] > decision_threshold)
+        end = np.where(model_output[:, :, 1] > decision_threshold)
         for _start, predicate1 in zip(*start):
             for _end, predicate2 in zip(*end):
                 if _start <= _end and predicate1 == predicate2:
