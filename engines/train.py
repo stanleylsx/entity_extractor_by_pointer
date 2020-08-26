@@ -9,8 +9,7 @@ import torch
 import os
 
 
-def train(configs, logger):
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+def train(configs, device, logger):
     train_file = configs.datasets_fold + '/' + configs.train_file
     dev_file = configs.datasets_fold + '/' + configs.dev_file
     train_data = json.load(open(train_file, encoding='utf-8'))
@@ -69,7 +68,7 @@ def train(configs, logger):
             unprocessed = 0
             best_f1 = f1
             best_epoch = i + 1
-            model_name = 'model_' + str(i + 1) + '.pkl'
+            model_name = 'model_' + str(best_epoch) + '.pkl'
             torch.save(model, os.path.join(configs.checkpoints_dir, model_name))
             logger.info('saved ' + model_name + ' successful...')
         else:

@@ -4,7 +4,7 @@ import torch
 import numpy as np
 
 
-def extract_entities(tokenizer, text, bert_model, model, device):
+def extract_entities(configs, tokenizer, text, bert_model, model, device, mode='evaluate'):
     """
     从验证集中预测到相关实体
     """
@@ -15,6 +15,8 @@ def extract_entities(tokenizer, text, bert_model, model, device):
     attention_mask = torch.unsqueeze(torch.LongTensor(token_results.get('attention_mask')), 0).to(device)
     bert_hidden_states = bert_model(token_ids, attention_mask=attention_mask)[0].to(device)
     model_outputs = model(bert_hidden_states).detach().to('cpu')
+    categories = {configs.class_name[index]: index for index in range(0, len(configs.class_name))}
+    reverse_categories = {class_id: class_name for class_name, class_id in categories.items()}
     for model_output in model_outputs:
         start = np.where(model_output[:, :, 0] > 0.5)
         end = np.where(model_output[:, :, 1] > 0.5)
@@ -23,7 +25,10 @@ def extract_entities(tokenizer, text, bert_model, model, device):
                 if _start <= _end and predicate1 == predicate2:
                     token_list = input_ids[_start: _end + 1]
                     token_list = [token for token in token_list if token != 0]
-                    predict_results.setdefault(predicate1, set()).add(str(token_list))
+                    if mode == 'predict':
+                        predict_results.setdefault(reverse_categories[predicate1], set()).add(tokenizer.decode(token_list))
+                    else:
+                        predict_results.setdefault(predicate1, set()).add(str(token_list))
                     break
     return predict_results
 
@@ -44,7 +49,7 @@ def evaluate(configs, bert_model, model, dev_data, device):
 
     for data_row in tqdm(iter(dev_data)):
         results = {}
-        p_results = extract_entities(tokenizer, data_row.get('text'), bert_model, model, device)
+        p_results = extract_entities(configs, tokenizer, data_row.get('text'), bert_model, model, device)
         for class_name, class_id in categories.items():
             item_text = data_row.get(class_name)
             if item_text is not None:

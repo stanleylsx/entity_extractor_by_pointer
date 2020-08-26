@@ -1,8 +1,11 @@
 from utils.logger import get_logger
 from configure import Configure
 from engines.train import train
+from transformers import BertTokenizer, BertModel
+from engines.predict import extract_entities
 import argparse
 import os
+import torch
 
 
 def fold_check(configures):
@@ -22,6 +25,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Entity extractor by binary tagging')
     parser.add_argument('--config_file', default='system.config', help='Configuration File')
     args = parser.parse_args()
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     configs = Configure(config_file=args.config_file)
     fold_check(configs)
     logger = get_logger(configs.log_dir)
@@ -29,4 +33,16 @@ if __name__ == '__main__':
     mode = configs.mode.lower()
     if mode == 'train':
         logger.info('mode: train')
-        train(configs, logger)
+        train(configs, device, logger)
+    elif mode == 'interactive_predict':
+        logger.info('mode: predict_one')
+        tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
+        bert_model = BertModel.from_pretrained('bert-base-chinese').to(device)
+        model = torch.load('models/model_1.pkl')
+        while True:
+            logger.info('please input a sentence (enter [exit] to exit.)')
+            sentence = input()
+            if sentence == 'exit':
+                break
+            results = extract_entities(configs, tokenizer, sentence, bert_model, model, device, mode='predict')
+            print(results)
