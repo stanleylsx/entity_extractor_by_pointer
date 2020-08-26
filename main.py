@@ -12,8 +12,11 @@ def fold_check(configures):
     checkpoints_dir = 'checkpoints_dir'
     if not os.path.exists(configures.checkpoints_dir) or not hasattr(configures, checkpoints_dir):
         print('checkpoints fold not found, creating...')
-        dir_name = configures.checkpoints_dir.split('/')[0]
-        os.mkdir(dir_name)
+        paths = configures.checkpoints_dir.split('/')
+        if len(paths) == 2 and os.path.exists(paths[0]) and not os.path.exists(configures.checkpoints_dir):
+            os.mkdir(configures.checkpoints_dir)
+        else:
+            os.mkdir('checkpoints')
 
     log_dir = 'log_dir'
     if not os.path.exists(configures.log_dir) or not hasattr(configures, log_dir):
@@ -38,7 +41,7 @@ if __name__ == '__main__':
         logger.info('mode: predict_one')
         tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
         bert_model = BertModel.from_pretrained('bert-base-chinese').to(device)
-        model = torch.load('models/model_1.pkl')
+        model = torch.load(os.path.join(configs.checkpoints_dir, 'best_model.pkl'))
         while True:
             logger.info('please input a sentence (enter [exit] to exit.)')
             sentence = input()

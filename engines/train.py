@@ -69,8 +69,11 @@ def train(configs, device, logger):
             best_f1 = f1
             best_epoch = i + 1
             model_name = 'model_' + str(best_epoch) + '.pkl'
+            best_model_name = 'best_model.pkl'
             torch.save(model, os.path.join(configs.checkpoints_dir, model_name))
+            torch.save(model, os.path.join(configs.checkpoints_dir, best_model_name))
             logger.info('saved ' + model_name + ' successful...')
+            logger.info('saved best model successful...')
         else:
             unprocessed += 1
         aver_loss = loss_sum / step
