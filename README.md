@@ -75,7 +75,11 @@ mode=interactive_predict
 
 交互测试结果如下
 
+* example_datasets1
+
 ![img04](img/image04.png)
+
+* example_datasets2
 
 ![img05](img/image05.png)
 
