@@ -13,6 +13,7 @@
  ++++++++++++++++++++++++++++++++++++++++
 Labeling Scheme:
      classnames     scheme: ['company', 'position', 'detail']
+     decision    threshold: 0.5
  ++++++++++++++++++++++++++++++++++++++++
  Training Settings:
      epoch                : 50
