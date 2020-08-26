@@ -33,6 +33,20 @@
 class_name=[a,b,c]
 ```
 
+* 选择训练模式
+
+```
+################ Status ################
+mode=train
+# string: train/test/interactive_predict
+```
+
+* 根据结果调高或调低decision_threshold这个超参数(sigmoid的输出大于这个参数会被判定为实体的首/尾)
+
+```
+decision_threshold=0.5
+```
+
 * 运行main.py
 
 ## 结果
@@ -48,6 +62,22 @@ class_name=[a,b,c]
 ![example_datasets2](img/image03.png)
 
 当前模型这个人民日报的ner数据集效果不佳，需要近一步调参炼丹
+
+## 测试
+
+* 选择测试模式，程序会读取训练过程中最好的模型
+
+```
+################ Status ################
+mode=interactive_predict
+# string: train/test/interactive_predict
+```
+
+交互测试结果如下
+
+![img04](img/image04.png)
+
+![img05](img/image05.png)
 
 ## 参考
 
