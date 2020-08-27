@@ -1,6 +1,7 @@
 from utils.logger import get_logger
 from configure import Configure
 from engines.train import train
+from engines.model import Model
 from transformers import BertTokenizer, BertModel
 from engines.predict import extract_entities
 import argparse
@@ -41,7 +42,9 @@ if __name__ == '__main__':
         logger.info('mode: predict_one')
         tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
         bert_model = BertModel.from_pretrained('bert-base-chinese').to(device)
-        model = torch.load(os.path.join(configs.checkpoints_dir, 'best_model.pkl'))
+        num_labels = len(configs.class_name)
+        model = Model(hidden_size=768, num_labels=num_labels).to(device)
+        model.load_state_dict(torch.load(os.path.join(configs.checkpoints_dir, 'best_model.pkl')))
         while True:
             logger.info('please input a sentence (enter [exit] to exit.)')
             sentence = input()

@@ -70,8 +70,8 @@ def train(configs, device, logger):
             best_epoch = i + 1
             model_name = 'model_' + str(best_epoch) + '.pkl'
             best_model_name = 'best_model.pkl'
-            torch.save(model, os.path.join(configs.checkpoints_dir, model_name))
-            torch.save(model, os.path.join(configs.checkpoints_dir, best_model_name))
+            torch.save(model.state_dict(), os.path.join(configs.checkpoints_dir, model_name))
+            torch.save(model.state_dict(), os.path.join(configs.checkpoints_dir, best_model_name))
             logger.info('saved ' + model_name + ' successful...')
             logger.info('saved best model successful...')
         else:
