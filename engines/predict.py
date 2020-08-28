@@ -26,6 +26,8 @@ def extract_entities(configs, tokenizer, text, bert_model, model, device, mode='
                 if _start <= _end and predicate1 == predicate2:
                     token_list = input_ids[_start: _end + 1]
                     token_list = [token for token in token_list if token != 0]
+                    if not token_list:
+                        continue
                     if mode == 'predict':
                         predict_results.setdefault(reverse_categories[predicate1], set()).add(tokenizer.decode(token_list))
                     else:
