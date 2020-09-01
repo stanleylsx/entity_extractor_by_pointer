@@ -1,37 +1,35 @@
 from tqdm import tqdm
 from transformers import BertTokenizer
+from utils.rematch import rematch
 import torch
 import numpy as np
 
 
-def extract_entities(configs, tokenizer, text, bert_model, model, device, mode='evaluate'):
+def extract_entities(configs, tokenizer, text, bert_model, model, device):
     """
     从验证集中预测到相关实体
     """
     predict_results = {}
-    token_results = tokenizer(text, padding='max_length')
-    input_ids = token_results.get('input_ids')
+    encode_results = tokenizer(text, padding='max_length')
+    input_ids = encode_results.get('input_ids')
+    token = tokenizer.convert_ids_to_tokens(input_ids)
+    mapping = rematch(text, token)
     token_ids = torch.unsqueeze(torch.LongTensor(input_ids), 0).to(device)
-    attention_mask = torch.unsqueeze(torch.LongTensor(token_results.get('attention_mask')), 0).to(device)
+    attention_mask = torch.unsqueeze(torch.LongTensor(encode_results.get('attention_mask')), 0).to(device)
     bert_hidden_states = bert_model(token_ids, attention_mask=attention_mask)[0].to(device)
     model_outputs = model(bert_hidden_states).detach().to('cpu')
     decision_threshold = float(configs.decision_threshold)
-    categories = {configs.class_name[index]: index for index in range(0, len(configs.class_name))}
-    reverse_categories = {class_id: class_name for class_name, class_id in categories.items()}
     for model_output in model_outputs:
         start = np.where(model_output[:, :, 0] > decision_threshold)
         end = np.where(model_output[:, :, 1] > decision_threshold)
         for _start, predicate1 in zip(*start):
             for _end, predicate2 in zip(*end):
                 if _start <= _end and predicate1 == predicate2:
-                    token_list = input_ids[_start: _end + 1]
-                    token_list = [token for token in token_list if token != 0]
-                    if not token_list:
-                        continue
-                    if mode == 'predict':
-                        predict_results.setdefault(reverse_categories[predicate1], set()).add(tokenizer.decode(token_list))
-                    else:
-                        predict_results.setdefault(predicate1, set()).add(str(token_list))
+                    if len(mapping[_start]) > 0 and len(mapping[_end]) > 0:
+                        start_in_text = mapping[_start][0]
+                        end_in_text = mapping[_end][-1]
+                        entity_text = text[start_in_text: end_in_text + 1]
+                        predict_results.setdefault(predicate1, set()).add(entity_text)
                     break
     return predict_results
 
@@ -57,26 +55,24 @@ def evaluate(configs, bert_model, model, dev_data, device):
             item_text = data_row.get(class_name)
             if item_text is not None:
                 if type(item_text) is str:
-                    item_token = tokenizer(item_text).get('input_ids')[1:-1]
-                    results.setdefault(class_id, set()).add(str(item_token))
+                    results.setdefault(class_id, set()).add(item_text)
                 elif type(item_text) is list:
                     for sub_item in item_text:
-                        item_token = tokenizer(sub_item).get('input_ids')[1:-1]
-                        results.setdefault(class_id, set()).add(str(item_token))
+                        results.setdefault(class_id, set()).add(sub_item)
             else:
                 results.setdefault(class_id, set())
 
-        for class_id, token_set in results.items():
-            p_token_set = p_results.get(class_id)
-            if p_token_set is None:
+        for class_id, entity_set in results.items():
+            p_entity_set = p_results.get(class_id)
+            if p_entity_set is None:
                 # 没预测出来
-                p_token_set = set()
+                p_entity_set = set()
             # 预测出来并且正确个数
-            counts[class_id]['A'] += len(p_token_set & token_set)
+            counts[class_id]['A'] += len(p_entity_set & entity_set)
             # 预测出来的结果个数
-            counts[class_id]['B'] += len(p_token_set)
+            counts[class_id]['B'] += len(p_entity_set)
             # 真实的结果个数
-            counts[class_id]['C'] += len(token_set)
+            counts[class_id]['C'] += len(entity_set)
     for class_id, count in counts.items():
         f1, precision, recall = 2 * count['A'] / (count['B'] + count['C']), count['A'] / count['B'], count['A'] / count['C']
         class_name = reverse_categories[class_id]

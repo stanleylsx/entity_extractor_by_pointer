@@ -50,5 +50,5 @@ if __name__ == '__main__':
             sentence = input()
             if sentence == 'exit':
                 break
-            results = extract_entities(configs, tokenizer, sentence, bert_model, model, device, mode='predict')
+            results = extract_entities(configs, tokenizer, sentence, bert_model, model, device)
             print(results)
