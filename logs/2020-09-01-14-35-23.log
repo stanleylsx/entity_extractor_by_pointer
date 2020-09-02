@@ -1,0 +1,417 @@
+2020-09-01 14:35:23
+++++++++++++++++++++++++++++++++++++++++CONFIGURATION SUMMARY++++++++++++++++++++++++++++++++++++++++
+ Status:
+     mode                 : train
+ ++++++++++++++++++++++++++++++++++++++++
+ Datasets:
+     datasets         fold: data/example_datasets1
+     train            file: train_data.json
+     validation       file: dev_data.json
+     test             file: None
+     checkpoints       dir: models/example_datasets1
+     log               dir: logs
+ ++++++++++++++++++++++++++++++++++++++++
+Labeling Scheme:
+     classnames     scheme: ['company', 'position', 'detail']
+     decision    threshold: 0.5
+ ++++++++++++++++++++++++++++++++++++++++
+ Training Settings:
+     epoch                : 50
+     batch            size: 128
+     dropout              : 0.5
+     learning         rate: 0.001
+     is     early     stop: True
+     patient              : 5
+++++++++++++++++++++++++++++++++++++++++CONFIGURATION SUMMARY END++++++++++++++++++++++++++++++++++++++++
+mode: train
+train_data_length:4569,batch_size:128,steps in each epoch:35
+dev_data_length:508
+
+epoch:1/50
+start evaluate engines...
+class_name: company, precision: 0.7279, recall: 0.6407, f1: 0.6815
+class_name: position, precision: 0.3846, recall: 0.0100, f1: 0.0195
+class_name: detail, precision: 0.8123, recall: 0.5197, f1: 0.6339
+saved model_1.pkl successful...
+saved best model successful...
+aver_loss: 0.1584, f1: 0.4449, best_f1: 0.4449, best_epoch: 1 
+
+epoch:2/50
+start evaluate engines...
+class_name: company, precision: 0.9098, recall: 0.6647, f1: 0.7682
+class_name: position, precision: 0.7793, recall: 0.4651, f1: 0.5825
+class_name: detail, precision: 0.9532, recall: 0.6811, f1: 0.7945
+saved model_2.pkl successful...
+saved best model successful...
+aver_loss: 0.0198, f1: 0.7151, best_f1: 0.7151, best_epoch: 2 
+
+epoch:3/50
+start evaluate engines...
+class_name: company, precision: 0.9160, recall: 0.6966, f1: 0.7914
+class_name: position, precision: 0.8290, recall: 0.6387, f1: 0.7215
+class_name: detail, precision: 0.9619, recall: 0.7953, f1: 0.8707
+saved model_3.pkl successful...
+saved best model successful...
+aver_loss: 0.0115, f1: 0.7945, best_f1: 0.7945, best_epoch: 3 
+
+epoch:4/50
+start evaluate engines...
+class_name: company, precision: 0.9139, recall: 0.7625, f1: 0.8313
+class_name: position, precision: 0.8621, recall: 0.7365, f1: 0.7944
+class_name: detail, precision: 0.9554, recall: 0.8858, f1: 0.9193
+saved model_4.pkl successful...
+saved best model successful...
+aver_loss: 0.0083, f1: 0.8483, best_f1: 0.8483, best_epoch: 4 
+
+epoch:5/50
+start evaluate engines...
+class_name: company, precision: 0.9308, recall: 0.8323, f1: 0.8788
+class_name: position, precision: 0.8722, recall: 0.7764, f1: 0.8215
+class_name: detail, precision: 0.9628, recall: 0.9173, f1: 0.9395
+saved model_5.pkl successful...
+saved best model successful...
+aver_loss: 0.0065, f1: 0.8800, best_f1: 0.8800, best_epoch: 5 
+
+epoch:6/50
+start evaluate engines...
+class_name: company, precision: 0.9346, recall: 0.8563, f1: 0.8937
+class_name: position, precision: 0.8938, recall: 0.8064, f1: 0.8478
+class_name: detail, precision: 0.9654, recall: 0.9350, f1: 0.9500
+saved model_6.pkl successful...
+saved best model successful...
+aver_loss: 0.0053, f1: 0.8972, best_f1: 0.8972, best_epoch: 6 
+
+epoch:7/50
+start evaluate engines...
+class_name: company, precision: 0.9496, recall: 0.8643, f1: 0.9049
+class_name: position, precision: 0.9181, recall: 0.8283, f1: 0.8709
+class_name: detail, precision: 0.9677, recall: 0.9449, f1: 0.9562
+saved model_7.pkl successful...
+saved best model successful...
+aver_loss: 0.0045, f1: 0.9107, best_f1: 0.9107, best_epoch: 7 
+
+epoch:8/50
+start evaluate engines...
+class_name: company, precision: 0.9469, recall: 0.8902, f1: 0.9177
+class_name: position, precision: 0.9236, recall: 0.8443, f1: 0.8822
+class_name: detail, precision: 0.9680, recall: 0.9528, f1: 0.9603
+saved model_8.pkl successful...
+saved best model successful...
+aver_loss: 0.0039, f1: 0.9201, best_f1: 0.9201, best_epoch: 8 
+
+epoch:9/50
+start evaluate engines...
+class_name: company, precision: 0.9536, recall: 0.9022, f1: 0.9272
+class_name: position, precision: 0.9383, recall: 0.8503, f1: 0.8921
+class_name: detail, precision: 0.9740, recall: 0.9587, f1: 0.9663
+saved model_9.pkl successful...
+saved best model successful...
+aver_loss: 0.0034, f1: 0.9285, best_f1: 0.9285, best_epoch: 9 
+
+epoch:10/50
+start evaluate engines...
+class_name: company, precision: 0.9585, recall: 0.9222, f1: 0.9400
+class_name: position, precision: 0.9400, recall: 0.8762, f1: 0.9070
+class_name: detail, precision: 0.9761, recall: 0.9665, f1: 0.9713
+saved model_10.pkl successful...
+saved best model successful...
+aver_loss: 0.0030, f1: 0.9394, best_f1: 0.9394, best_epoch: 10 
+
+epoch:11/50
+start evaluate engines...
+class_name: company, precision: 0.9587, recall: 0.9261, f1: 0.9421
+class_name: position, precision: 0.9464, recall: 0.8802, f1: 0.9121
+class_name: detail, precision: 0.9820, recall: 0.9685, f1: 0.9752
+saved model_11.pkl successful...
+saved best model successful...
+aver_loss: 0.0027, f1: 0.9432, best_f1: 0.9432, best_epoch: 11 
+
+epoch:12/50
+start evaluate engines...
+class_name: company, precision: 0.9667, recall: 0.9261, f1: 0.9460
+class_name: position, precision: 0.9527, recall: 0.8842, f1: 0.9172
+class_name: detail, precision: 0.9763, recall: 0.9744, f1: 0.9754
+saved model_12.pkl successful...
+saved best model successful...
+aver_loss: 0.0025, f1: 0.9462, best_f1: 0.9462, best_epoch: 12 
+
+epoch:13/50
+start evaluate engines...
+class_name: company, precision: 0.9649, recall: 0.9321, f1: 0.9482
+class_name: position, precision: 0.9526, recall: 0.8822, f1: 0.9161
+class_name: detail, precision: 0.9821, recall: 0.9744, f1: 0.9783
+saved model_13.pkl successful...
+saved best model successful...
+aver_loss: 0.0023, f1: 0.9475, best_f1: 0.9475, best_epoch: 13 
+
+epoch:14/50
+start evaluate engines...
+class_name: company, precision: 0.9690, recall: 0.9361, f1: 0.9523
+class_name: position, precision: 0.9553, recall: 0.8962, f1: 0.9248
+class_name: detail, precision: 0.9842, recall: 0.9783, f1: 0.9812
+saved model_14.pkl successful...
+saved best model successful...
+aver_loss: 0.0021, f1: 0.9528, best_f1: 0.9528, best_epoch: 14 
+
+epoch:15/50
+start evaluate engines...
+class_name: company, precision: 0.9689, recall: 0.9321, f1: 0.9502
+class_name: position, precision: 0.9634, recall: 0.8922, f1: 0.9264
+class_name: detail, precision: 0.9881, recall: 0.9803, f1: 0.9842
+saved model_15.pkl successful...
+saved best model successful...
+aver_loss: 0.0019, f1: 0.9536, best_f1: 0.9536, best_epoch: 15 
+
+epoch:16/50
+start evaluate engines...
+class_name: company, precision: 0.9771, recall: 0.9381, f1: 0.9572
+class_name: position, precision: 0.9654, recall: 0.8902, f1: 0.9263
+class_name: detail, precision: 0.9901, recall: 0.9803, f1: 0.9852
+saved model_16.pkl successful...
+saved best model successful...
+aver_loss: 0.0018, f1: 0.9562, best_f1: 0.9562, best_epoch: 16 
+
+epoch:17/50
+start evaluate engines...
+class_name: company, precision: 0.9773, recall: 0.9441, f1: 0.9604
+class_name: position, precision: 0.9675, recall: 0.8922, f1: 0.9283
+class_name: detail, precision: 0.9881, recall: 0.9803, f1: 0.9842
+saved model_17.pkl successful...
+saved best model successful...
+aver_loss: 0.0017, f1: 0.9576, best_f1: 0.9576, best_epoch: 17 
+
+epoch:18/50
+start evaluate engines...
+class_name: company, precision: 0.9813, recall: 0.9421, f1: 0.9613
+class_name: position, precision: 0.9597, recall: 0.9022, f1: 0.9300
+class_name: detail, precision: 0.9901, recall: 0.9843, f1: 0.9872
+saved model_18.pkl successful...
+saved best model successful...
+aver_loss: 0.0016, f1: 0.9595, best_f1: 0.9595, best_epoch: 18 
+
+epoch:19/50
+start evaluate engines...
+class_name: company, precision: 0.9854, recall: 0.9441, f1: 0.9643
+class_name: position, precision: 0.9620, recall: 0.9102, f1: 0.9354
+class_name: detail, precision: 0.9960, recall: 0.9882, f1: 0.9921
+saved model_19.pkl successful...
+saved best model successful...
+aver_loss: 0.0015, f1: 0.9639, best_f1: 0.9639, best_epoch: 19 
+
+epoch:20/50
+start evaluate engines...
+class_name: company, precision: 0.9795, recall: 0.9521, f1: 0.9656
+class_name: position, precision: 0.9679, recall: 0.9042, f1: 0.9350
+class_name: detail, precision: 0.9960, recall: 0.9902, f1: 0.9931
+saved model_20.pkl successful...
+saved best model successful...
+aver_loss: 0.0014, f1: 0.9646, best_f1: 0.9646, best_epoch: 20 
+
+epoch:21/50
+start evaluate engines...
+class_name: company, precision: 0.9815, recall: 0.9541, f1: 0.9676
+class_name: position, precision: 0.9678, recall: 0.9002, f1: 0.9328
+class_name: detail, precision: 0.9960, recall: 0.9902, f1: 0.9931
+aver_loss: 0.0013, f1: 0.9645, best_f1: 0.9646, best_epoch: 20 
+
+epoch:22/50
+start evaluate engines...
+class_name: company, precision: 0.9937, recall: 0.9521, f1: 0.9725
+class_name: position, precision: 0.9677, recall: 0.8982, f1: 0.9317
+class_name: detail, precision: 0.9960, recall: 0.9902, f1: 0.9931
+saved model_22.pkl successful...
+saved best model successful...
+aver_loss: 0.0013, f1: 0.9657, best_f1: 0.9657, best_epoch: 22 
+
+epoch:23/50
+start evaluate engines...
+class_name: company, precision: 0.9896, recall: 0.9541, f1: 0.9715
+class_name: position, precision: 0.9597, recall: 0.9042, f1: 0.9311
+class_name: detail, precision: 0.9960, recall: 0.9902, f1: 0.9931
+aver_loss: 0.0012, f1: 0.9653, best_f1: 0.9657, best_epoch: 22 
+
+epoch:24/50
+start evaluate engines...
+class_name: company, precision: 0.9898, recall: 0.9661, f1: 0.9778
+class_name: position, precision: 0.9639, recall: 0.9062, f1: 0.9342
+class_name: detail, precision: 0.9960, recall: 0.9902, f1: 0.9931
+saved model_24.pkl successful...
+saved best model successful...
+aver_loss: 0.0012, f1: 0.9683, best_f1: 0.9683, best_epoch: 24 
+
+epoch:25/50
+start evaluate engines...
+class_name: company, precision: 0.9918, recall: 0.9621, f1: 0.9767
+class_name: position, precision: 0.9679, recall: 0.9022, f1: 0.9339
+class_name: detail, precision: 0.9941, recall: 0.9882, f1: 0.9911
+aver_loss: 0.0011, f1: 0.9672, best_f1: 0.9683, best_epoch: 24 
+
+epoch:26/50
+start evaluate engines...
+class_name: company, precision: 0.9898, recall: 0.9641, f1: 0.9767
+class_name: position, precision: 0.9722, recall: 0.9082, f1: 0.9391
+class_name: detail, precision: 0.9960, recall: 0.9902, f1: 0.9931
+saved model_26.pkl successful...
+saved best model successful...
+aver_loss: 0.0011, f1: 0.9696, best_f1: 0.9696, best_epoch: 26 
+
+epoch:27/50
+start evaluate engines...
+class_name: company, precision: 0.9918, recall: 0.9661, f1: 0.9788
+class_name: position, precision: 0.9720, recall: 0.9002, f1: 0.9347
+class_name: detail, precision: 0.9960, recall: 0.9902, f1: 0.9931
+aver_loss: 0.0010, f1: 0.9689, best_f1: 0.9696, best_epoch: 26 
+
+epoch:28/50
+start evaluate engines...
+class_name: company, precision: 0.9898, recall: 0.9681, f1: 0.9788
+class_name: position, precision: 0.9681, recall: 0.9082, f1: 0.9372
+class_name: detail, precision: 0.9941, recall: 0.9882, f1: 0.9911
+aver_loss: 0.0010, f1: 0.9690, best_f1: 0.9696, best_epoch: 26 
+
+epoch:29/50
+start evaluate engines...
+class_name: company, precision: 0.9918, recall: 0.9661, f1: 0.9788
+class_name: position, precision: 0.9722, recall: 0.9062, f1: 0.9380
+class_name: detail, precision: 0.9960, recall: 0.9921, f1: 0.9941
+saved model_29.pkl successful...
+saved best model successful...
+aver_loss: 0.0009, f1: 0.9703, best_f1: 0.9703, best_epoch: 29 
+
+epoch:30/50
+start evaluate engines...
+class_name: company, precision: 0.9878, recall: 0.9681, f1: 0.9778
+class_name: position, precision: 0.9658, recall: 0.9022, f1: 0.9329
+class_name: detail, precision: 0.9960, recall: 0.9921, f1: 0.9941
+aver_loss: 0.0009, f1: 0.9683, best_f1: 0.9703, best_epoch: 29 
+
+epoch:31/50
+start evaluate engines...
+class_name: company, precision: 0.9878, recall: 0.9681, f1: 0.9778
+class_name: position, precision: 0.9582, recall: 0.9162, f1: 0.9367
+class_name: detail, precision: 0.9961, recall: 0.9941, f1: 0.9951
+aver_loss: 0.0009, f1: 0.9699, best_f1: 0.9703, best_epoch: 29 
+
+epoch:32/50
+start evaluate engines...
+class_name: company, precision: 0.9939, recall: 0.9681, f1: 0.9808
+class_name: position, precision: 0.9682, recall: 0.9102, f1: 0.9383
+class_name: detail, precision: 0.9960, recall: 0.9902, f1: 0.9931
+saved model_32.pkl successful...
+saved best model successful...
+aver_loss: 0.0008, f1: 0.9707, best_f1: 0.9707, best_epoch: 32 
+
+epoch:33/50
+start evaluate engines...
+class_name: company, precision: 0.9959, recall: 0.9661, f1: 0.9807
+class_name: position, precision: 0.9701, recall: 0.9082, f1: 0.9381
+class_name: detail, precision: 0.9960, recall: 0.9902, f1: 0.9931
+aver_loss: 0.0008, f1: 0.9707, best_f1: 0.9707, best_epoch: 32 
+
+epoch:34/50
+start evaluate engines...
+class_name: company, precision: 0.9939, recall: 0.9701, f1: 0.9818
+class_name: position, precision: 0.9720, recall: 0.9002, f1: 0.9347
+class_name: detail, precision: 0.9960, recall: 0.9902, f1: 0.9931
+aver_loss: 0.0008, f1: 0.9699, best_f1: 0.9707, best_epoch: 32 
+
+epoch:35/50
+start evaluate engines...
+class_name: company, precision: 0.9939, recall: 0.9681, f1: 0.9808
+class_name: position, precision: 0.9723, recall: 0.9122, f1: 0.9413
+class_name: detail, precision: 0.9960, recall: 0.9902, f1: 0.9931
+saved model_35.pkl successful...
+saved best model successful...
+aver_loss: 0.0007, f1: 0.9717, best_f1: 0.9717, best_epoch: 35 
+
+epoch:36/50
+start evaluate engines...
+class_name: company, precision: 0.9938, recall: 0.9641, f1: 0.9787
+class_name: position, precision: 0.9744, recall: 0.9102, f1: 0.9412
+class_name: detail, precision: 0.9980, recall: 0.9961, f1: 0.9970
+saved model_36.pkl successful...
+saved best model successful...
+aver_loss: 0.0007, f1: 0.9723, best_f1: 0.9723, best_epoch: 36 
+
+epoch:37/50
+start evaluate engines...
+class_name: company, precision: 0.9939, recall: 0.9701, f1: 0.9818
+class_name: position, precision: 0.9723, recall: 0.9122, f1: 0.9413
+class_name: detail, precision: 0.9980, recall: 0.9980, f1: 0.9980
+saved model_37.pkl successful...
+saved best model successful...
+aver_loss: 0.0007, f1: 0.9737, best_f1: 0.9737, best_epoch: 37 
+
+epoch:38/50
+start evaluate engines...
+class_name: company, precision: 0.9918, recall: 0.9701, f1: 0.9808
+class_name: position, precision: 0.9722, recall: 0.9062, f1: 0.9380
+class_name: detail, precision: 0.9961, recall: 0.9961, f1: 0.9961
+aver_loss: 0.0007, f1: 0.9716, best_f1: 0.9737, best_epoch: 37 
+
+epoch:39/50
+start evaluate engines...
+class_name: company, precision: 0.9918, recall: 0.9701, f1: 0.9808
+class_name: position, precision: 0.9702, recall: 0.9102, f1: 0.9392
+class_name: detail, precision: 0.9961, recall: 0.9961, f1: 0.9961
+aver_loss: 0.0006, f1: 0.9720, best_f1: 0.9737, best_epoch: 37 
+
+epoch:40/50
+start evaluate engines...
+class_name: company, precision: 0.9939, recall: 0.9701, f1: 0.9818
+class_name: position, precision: 0.9783, recall: 0.8982, f1: 0.9365
+class_name: detail, precision: 0.9961, recall: 0.9961, f1: 0.9961
+aver_loss: 0.0006, f1: 0.9715, best_f1: 0.9737, best_epoch: 37 
+
+epoch:41/50
+start evaluate engines...
+class_name: company, precision: 0.9939, recall: 0.9701, f1: 0.9818
+class_name: position, precision: 0.9746, recall: 0.9182, f1: 0.9455
+class_name: detail, precision: 0.9980, recall: 0.9980, f1: 0.9980
+saved model_41.pkl successful...
+saved best model successful...
+aver_loss: 0.0006, f1: 0.9751, best_f1: 0.9751, best_epoch: 41 
+
+epoch:42/50
+start evaluate engines...
+class_name: company, precision: 0.9939, recall: 0.9701, f1: 0.9818
+class_name: position, precision: 0.9644, recall: 0.9182, f1: 0.9407
+class_name: detail, precision: 0.9980, recall: 0.9980, f1: 0.9980
+aver_loss: 0.0006, f1: 0.9735, best_f1: 0.9751, best_epoch: 41 
+
+epoch:43/50
+start evaluate engines...
+class_name: company, precision: 0.9959, recall: 0.9681, f1: 0.9818
+class_name: position, precision: 0.9762, recall: 0.9022, f1: 0.9378
+class_name: detail, precision: 0.9980, recall: 0.9961, f1: 0.9970
+aver_loss: 0.0006, f1: 0.9722, best_f1: 0.9751, best_epoch: 41 
+
+epoch:44/50
+start evaluate engines...
+class_name: company, precision: 0.9939, recall: 0.9701, f1: 0.9818
+class_name: position, precision: 0.9765, recall: 0.9122, f1: 0.9432
+class_name: detail, precision: 0.9980, recall: 0.9980, f1: 0.9980
+aver_loss: 0.0006, f1: 0.9744, best_f1: 0.9751, best_epoch: 41 
+
+epoch:45/50
+start evaluate engines...
+class_name: company, precision: 0.9939, recall: 0.9681, f1: 0.9808
+class_name: position, precision: 0.9744, recall: 0.9102, f1: 0.9412
+class_name: detail, precision: 0.9980, recall: 0.9980, f1: 0.9980
+aver_loss: 0.0005, f1: 0.9733, best_f1: 0.9751, best_epoch: 41 
+
+epoch:46/50
+start evaluate engines...
+class_name: company, precision: 0.9959, recall: 0.9681, f1: 0.9818
+class_name: position, precision: 0.9743, recall: 0.9082, f1: 0.9401
+class_name: detail, precision: 0.9980, recall: 0.9980, f1: 0.9980
+aver_loss: 0.0005, f1: 0.9733, best_f1: 0.9751, best_epoch: 41 
+
+epoch:47/50
+start evaluate engines...
+class_name: company, precision: 0.9939, recall: 0.9721, f1: 0.9828
+class_name: position, precision: 0.9764, recall: 0.9082, f1: 0.9411
+class_name: detail, precision: 0.9980, recall: 0.9980, f1: 0.9980
+aver_loss: 0.0005, f1: 0.9740, best_f1: 0.9751, best_epoch: 41 
+
+early stopped, no progress obtained within 47 epochs

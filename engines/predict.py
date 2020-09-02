@@ -80,3 +80,18 @@ def evaluate(configs, bert_model, model, dev_data, device):
         results_of_each_entity[class_name]['precision'] = precision
         results_of_each_entity[class_name]['recall'] = recall
     return results_of_each_entity
+
+
+def predict_one(configs, tokenizer, sentence, bert_model, model, device):
+    """
+    预测接口
+    """
+    categories = {configs.class_name[index]: index for index in range(0, len(configs.class_name))}
+    reverse_categories = {class_id: class_name for class_name, class_id in categories.items()}
+    results = extract_entities(configs, tokenizer, sentence, bert_model, model, device)
+    results_dict = {}
+    for class_id, result_set in results.items():
+        results_dict[reverse_categories[class_id]] = list(result_set)
+    return results_dict
+
+

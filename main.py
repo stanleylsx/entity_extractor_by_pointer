@@ -3,7 +3,7 @@ from configure import Configure
 from engines.train import train
 from engines.model import Model
 from transformers import BertTokenizer, BertModel
-from engines.predict import extract_entities
+from engines.predict import predict_one
 import argparse
 import os
 import torch
@@ -50,5 +50,5 @@ if __name__ == '__main__':
             sentence = input()
             if sentence == 'exit':
                 break
-            results = extract_entities(configs, tokenizer, sentence, bert_model, model, device)
-            print(results)
+            result = predict_one(configs, tokenizer, sentence, bert_model, model, device)
+            print(result)
