@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# @Author : lishouxian
+# @Email : gzlishouxian@gmail.com
+# @File : split_data.py
+# @Software: PyCharm
 import random
 
 

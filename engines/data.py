@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# @Author : lishouxian
+# @Email : gzlishouxian@gmail.com
+# @File : data.py
+# @Software: PyCharm
 from transformers import BertTokenizer
 from torch.utils.data import Dataset
 import torch

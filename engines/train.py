@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# @Author : lishouxian
+# @Email : gzlishouxian@gmail.com
+# @File : train.py
+# @Software: PyCharm
 from engines.model import Model
 from transformers import AdamW, BertModel
 from tqdm import tqdm
@@ -6,6 +11,7 @@ from engines.data import DataGenerator, MyDataset, collate_fn
 from engines.predict import evaluate
 import json
 import torch
+
 import os
 
 

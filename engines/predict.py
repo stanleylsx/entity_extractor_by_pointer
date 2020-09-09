@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# @Author : lishouxian
+# @Email : gzlishouxian@gmail.com
+# @File : predict.py
+# @Software: PyCharm
 from tqdm import tqdm
 from transformers import BertTokenizer
 from utils.rematch import rematch

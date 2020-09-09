@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# @Author : lishouxian
+# @Email : gzlishouxian@gmail.com
+# @File : split_text.py
+# @Software: PyCharm
 import re
 
 

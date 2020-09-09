@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# @Author : lishouxian
+# @Email : gzlishouxian@gmail.com
+# @File : model.py
+# @Software: PyCharm
 from abc import ABC
 from torch import nn
 

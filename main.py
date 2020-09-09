@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# @Author : lishouxian
+# @Email : gzlishouxian@gmail.com
+# @File : main.py
+# @Software: PyCharm
 from utils.logger import get_logger
 from configure import Configure
 from engines.train import train
