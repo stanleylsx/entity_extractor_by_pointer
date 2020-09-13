@@ -11,7 +11,7 @@
 
 ## 原理
 
-![模型原理图](img/image01.png)
+![模型原理图](https://img-blog.csdnimg.cn/20200913193759358.png)
 
 ## 运行
 
@@ -53,13 +53,13 @@ decision_threshold=0.5
 
 * example_datasets1
 
-![example_datasets1](img/image02.png)
+![example_datasets1](https://img-blog.csdnimg.cn/20200913193759349.png)
 
 这里的数据模式比较简单，比较容易达到验证集拟合状态
 
 * example_datasets2
 
-![example_datasets2](img/image03.png)
+![example_datasets2](https://img-blog.csdnimg.cn/20200913193759364.png)
 
 当前模型这个人民日报的ner数据集效果不佳，需要近一步调参炼丹
 
@@ -77,11 +77,11 @@ mode=interactive_predict
 
 * example_datasets1
 
-![img04](img/image04.png)
+![img04](https://img-blog.csdnimg.cn/20200913193759427.png)
 
 * example_datasets2
 
-![img05](img/image05.png)
+![img05](https://img-blog.csdnimg.cn/20200913193759376.png)
 
 ## 参考
 
