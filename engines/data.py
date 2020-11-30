@@ -5,6 +5,7 @@
 # @Software: PyCharm
 from transformers import BertTokenizer
 from torch.utils.data import Dataset
+from tqdm import tqdm
 import torch
 import numpy as np
 import re
@@ -40,7 +41,7 @@ class DataGenerator:
         segment_vectors = []
         attention_mask_vectors = []
         entity_vectors = []
-        for item in self.data:
+        for item in tqdm(self.data):
             text = item.get('text')
             token_results = self.tokenizer(text, padding='max_length')
             token_ids = token_results.get('input_ids')

@@ -13,7 +13,6 @@ import json
 import torch
 import time
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 
 
 def train(configs, device, logger):
