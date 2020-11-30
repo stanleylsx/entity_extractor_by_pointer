@@ -11,8 +11,9 @@ from engines.data import DataGenerator, MyDataset, collate_fn
 from engines.predict import evaluate
 import json
 import torch
-
+import time
 import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 
 
 def train(configs, device, logger):
@@ -42,8 +43,10 @@ def train(configs, device, logger):
     best_f1 = 0
     best_epoch = 0
     unprocessed = 0
+    very_start_time = time.time()
     for i in range(configs.epoch):
         logger.info('epoch:{}/{}'.format(i + 1, configs.epoch))
+        start_time = time.time()
         step, loss, loss_sum = 0, 0.0, 0.0
         for step, loader_res in tqdm(iter(enumerate(loader))):
             sentences = loader_res['sentence'].to(device)
@@ -62,6 +65,7 @@ def train(configs, device, logger):
         model.eval()
         logger.info('start evaluate engines...')
         results_of_each_entity = evaluate(configs, bert_model, model, dev_data, device)
+        time_span = (time.time() - start_time) / 60
         f1 = 0.0
         for class_id, performance in results_of_each_entity.items():
             f1 += performance['f1']
@@ -70,16 +74,14 @@ def train(configs, device, logger):
                         % (class_id, performance['precision'], performance['recall'], performance['f1']))
         # 这里算得是所有类别的平均f1值
         f1 = f1 / len(results_of_each_entity)
+        logger.info('time consumption:%.2f(min)' % time_span)
+
         if f1 >= best_f1:
             unprocessed = 0
             best_f1 = f1
             best_epoch = i + 1
-            model_name = 'model_' + str(best_epoch) + '.pkl'
-            best_model_name = 'best_model.pkl'
-            torch.save(model.state_dict(), os.path.join(configs.checkpoints_dir, model_name))
-            torch.save(model.state_dict(), os.path.join(configs.checkpoints_dir, best_model_name))
-            logger.info('saved ' + model_name + ' successful...')
-            logger.info('saved best model successful...')
+            torch.save(model.state_dict(), os.path.join(configs.checkpoints_dir, 'best_model.pkl'))
+            logger.info('saved model successful...')
         else:
             unprocessed += 1
         aver_loss = loss_sum / step
@@ -87,5 +89,9 @@ def train(configs, device, logger):
             'aver_loss: %.4f, f1: %.4f, best_f1: %.4f, best_epoch: %d \n' % (aver_loss, f1, best_f1, best_epoch))
         if configs.is_early_stop:
             if unprocessed > configs.patient:
-                logger.info('early stopped, no progress obtained within {} epochs'.format(i + 1))
-                break
+                logger.info('early stopped, no progress obtained within {} epochs'.format(configs.patient))
+                logger.info('overall best f1 is {} at {} epoch'.format(best_f1, best_epoch))
+                logger.info('total training time consumption: %.3f(min)' % ((time.time() - very_start_time) / 60))
+                return
+    logger.info('overall best f1 is {} at {} epoch'.format(best_f1, best_epoch))
+    logger.info('total training time consumption: %.3f(min)' % ((time.time() - very_start_time) / 60))
