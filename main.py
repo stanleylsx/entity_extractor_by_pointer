@@ -3,7 +3,7 @@
 # @Email : gzlishouxian@gmail.com
 # @File : main.py
 # @Software: PyCharm
-from utils.logger import get_logger
+from engines.utils.logger import get_logger
 from configure import Configure
 from engines.train import train
 from engines.model import Model

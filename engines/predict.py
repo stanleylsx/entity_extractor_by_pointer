@@ -5,7 +5,7 @@
 # @Software: PyCharm
 from tqdm import tqdm
 from transformers import BertTokenizer
-from utils.rematch import rematch
+from engines.utils.rematch import rematch
 import torch
 import numpy as np
 
