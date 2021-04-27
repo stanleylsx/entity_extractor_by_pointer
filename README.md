@@ -94,3 +94,10 @@ mode=interactive_predict
 
 * [用bert4keras做三元组抽取](https://kexue.fm/archives/7161)
 * [A Novel Cascade Binary Tagging Framework for Relational Triple Extraction](https://arxiv.org/abs/1909.03227)
+
+## 公众号  
+
+相关问题欢迎在公众号反馈：  
+
+![小贤算法屋](https://img-blog.csdnimg.cn/20210427094903895.jpg)
+
