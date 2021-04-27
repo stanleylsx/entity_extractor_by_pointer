@@ -1,4 +1,4 @@
-# Entity-extractor-by-binary-tagging
+# Entity Extractor By Binary Tagging
 
 “半指针-半标注”方法实体的抽取器，基于苏神的[三元组抽取](https://kexue.fm/archives/7161)方法改造，这里取消了三元组抽取模型中对s的抽取，直接抽取实体并做分类(相当于直接抽取p和o)。改造后的实体抽取方法不仅可以运用于短实体的抽取，也可以运用到长句实体的抽取。
 
