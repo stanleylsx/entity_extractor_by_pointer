@@ -10,7 +10,7 @@ import torch
 import numpy as np
 
 
-def extract_entities(configs, tokenizer, text, bert_model, model, device):
+def extract_entities(configs, tokenizer, text, model, device):
     """
     从验证集中预测到相关实体
     """
@@ -21,8 +21,7 @@ def extract_entities(configs, tokenizer, text, bert_model, model, device):
     mapping = rematch(text, token)
     token_ids = torch.unsqueeze(torch.LongTensor(input_ids), 0).to(device)
     attention_mask = torch.unsqueeze(torch.LongTensor(encode_results.get('attention_mask')), 0).to(device)
-    bert_hidden_states = bert_model(token_ids, attention_mask=attention_mask)[0].to(device)
-    model_outputs = model(bert_hidden_states).detach().to('cpu')
+    model_outputs = model(token_ids, attention_mask).detach().to('cpu')
     decision_threshold = float(configs.decision_threshold)
     for model_output in model_outputs:
         start = np.where(model_output[:, :, 0] > decision_threshold)
@@ -39,7 +38,7 @@ def extract_entities(configs, tokenizer, text, bert_model, model, device):
     return predict_results
 
 
-def evaluate(configs, bert_model, model, dev_data, device):
+def evaluate(configs, model, dev_data, device):
     """
     评估函数，分别计算每个类别的f1、precision、recall
     """
@@ -55,7 +54,7 @@ def evaluate(configs, bert_model, model, dev_data, device):
 
     for data_row in tqdm(iter(dev_data)):
         results = {}
-        p_results = extract_entities(configs, tokenizer, data_row.get('text'), bert_model, model, device)
+        p_results = extract_entities(configs, tokenizer, data_row.get('text'), model, device)
         for class_name, class_id in categories.items():
             item_text = data_row.get(class_name)
             if item_text is not None:

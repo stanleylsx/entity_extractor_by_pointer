@@ -4,7 +4,7 @@
 # @File : train.py
 # @Software: PyCharm
 from engines.model import Model
-from transformers import AdamW, BertModel
+from transformers import AdamW
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 from engines.data import DataGenerator, MyDataset, collate_fn
@@ -35,7 +35,6 @@ def train(configs, device, logger):
     adam_epsilon = 1e-05
     num_labels = len(configs.class_name)
     model = Model(hidden_size=768, num_labels=num_labels).to(device)
-    bert_model = BertModel.from_pretrained('bert-base-chinese').to(device)
     params = list(model.parameters())
     optimizer = AdamW(params, lr=learning_rate, eps=adam_epsilon)
     loss_function = torch.nn.BCELoss(reduction='none')
@@ -51,9 +50,7 @@ def train(configs, device, logger):
             sentences = loader_res['sentence'].to(device)
             attention_mask = loader_res['attention_mask'].to(device)
             entity_vec = loader_res['entity_vec'].to(device)
-            with torch.no_grad():
-                bert_hidden_states = bert_model(sentences, attention_mask=attention_mask)[0].to(device)
-            model_output = model(bert_hidden_states).to(device)
+            model_output = model(sentences, attention_mask).to(device)
             loss = loss_function(model_output, entity_vec.float())
             loss = torch.sum(torch.mean(loss, 3), 2)
             loss = torch.sum(loss * attention_mask) / torch.sum(attention_mask)
@@ -63,7 +60,7 @@ def train(configs, device, logger):
             optimizer.step()
         model.eval()
         logger.info('start evaluate engines...')
-        results_of_each_entity = evaluate(configs, bert_model, model, dev_data, device)
+        results_of_each_entity = evaluate(configs, model, dev_data, device)
         time_span = (time.time() - start_time) / 60
         f1 = 0.0
         for class_id, performance in results_of_each_entity.items():

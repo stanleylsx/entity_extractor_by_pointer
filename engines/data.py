@@ -15,6 +15,8 @@ class DataGenerator:
     def __init__(self, configs, data, logger):
         self.data = data
         self.batch_size = configs.batch_size
+        self.max_sequence_length = configs.max_sequence_length
+        assert self.max_sequence_length <= 512, '超过序列最大长度设定'
         logger.info('train_data_length:{},batch_size:{},steps in each epoch:{}'
                     .format(len(data), self.batch_size, len(data)//self.batch_size))
         assert len(data) >= self.batch_size, '数据量不够一个批次'
@@ -36,6 +38,13 @@ class DataGenerator:
         end_index = start_index + len(token)
         return start_index, end_index - 1
 
+    def padding(self, token):
+        if len(token) < self.max_sequence_length:
+            token += [0 for _ in range(self.max_sequence_length - len(token))]
+        else:
+            token = token[:self.max_sequence_length]
+        return token
+
     def prepare_data(self):
         sentence_vectors = []
         segment_vectors = []
@@ -43,10 +52,10 @@ class DataGenerator:
         entity_vectors = []
         for item in tqdm(self.data):
             text = item.get('text')
-            token_results = self.tokenizer(text, padding='max_length')
-            token_ids = token_results.get('input_ids')
-            segment_ids = token_results.get('token_type_ids')
-            attention_mask = token_results.get('attention_mask')
+            token_results = self.tokenizer(text)
+            token_ids = self.padding(token_results.get('input_ids'))
+            segment_ids = self.padding(token_results.get('token_type_ids'))
+            attention_mask = self.padding(token_results.get('attention_mask'))
             entity_vector = np.zeros((len(token_ids), len(self.categories), 2))
             try:
                 for class_name, class_id in self.categories.items():

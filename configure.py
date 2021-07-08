@@ -47,6 +47,9 @@ class Configure:
             self.decision_threshold = config[the_item]
 
         # Training Settings:
+        the_item = 'max_sequence_length'
+        if the_item in config:
+            self.max_sequence_length = int(config[the_item])
         the_item = 'is_early_stop'
         if the_item in config:
             self.is_early_stop = self.str2bool(config[the_item])
@@ -120,6 +123,7 @@ class Configure:
         logger.info(' Training Settings:')
         logger.info('     epoch                : {}'.format(self.epoch))
         logger.info('     batch            size: {}'.format(self.batch_size))
+        logger.info('     max_sequence_length  : {}'.format(self.max_sequence_length))
         logger.info('     dropout              : {}'.format(self.dropout))
         logger.info('     learning         rate: {}'.format(self.learning_rate))
         logger.info('     is     early     stop: {}'.format(self.is_early_stop))
