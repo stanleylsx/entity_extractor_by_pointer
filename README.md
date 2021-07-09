@@ -67,9 +67,8 @@ decision_threshold=0.5
 
 * example_datasets2
 
-![example_datasets2](https://img-blog.csdnimg.cn/20200913193759364.png)
+![example_datasets2](https://img-blog.csdnimg.cn/20210709121748728.png)
 
-当前模型这个人民日报的ner数据集效果不佳，需要近一步调参炼丹
 
 ## 测试
 
