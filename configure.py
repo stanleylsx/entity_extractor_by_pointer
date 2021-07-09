@@ -123,7 +123,7 @@ class Configure:
         logger.info(' Training Settings:')
         logger.info('     epoch                : {}'.format(self.epoch))
         logger.info('     batch            size: {}'.format(self.batch_size))
-        logger.info('     max_sequence_length  : {}'.format(self.max_sequence_length))
+        logger.info('     max  sequence  length: {}'.format(self.max_sequence_length))
         logger.info('     dropout              : {}'.format(self.dropout))
         logger.info('     learning         rate: {}'.format(self.learning_rate))
         logger.info('     is     early     stop: {}'.format(self.is_early_stop))

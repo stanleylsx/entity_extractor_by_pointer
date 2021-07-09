@@ -1,0 +1,74 @@
+2021-07-09 11:28:39
+++++++++++++++++++++++++++++++++++++++++CONFIGURATION SUMMARY++++++++++++++++++++++++++++++++++++++++
+ Status:
+     mode                 : train
+ ++++++++++++++++++++++++++++++++++++++++
+ Datasets:
+     datasets         fold: data/example_datasets2
+     train            file: train_data.json
+     validation       file: dev_data.json
+     test             file: None
+     checkpoints       dir: models/example_datasets2
+     log               dir: logs
+ ++++++++++++++++++++++++++++++++++++++++
+Labeling Scheme:
+     classnames     scheme: ['person', 'location', 'organization']
+     decision    threshold: 0.5
+ ++++++++++++++++++++++++++++++++++++++++
+ Training Settings:
+     epoch                : 50
+     batch            size: 32
+     max_sequence_length  : 250
+     dropout              : 0.5
+     learning         rate: 5e-05
+     is     early     stop: True
+     patient              : 5
+++++++++++++++++++++++++++++++++++++++++CONFIGURATION SUMMARY END++++++++++++++++++++++++++++++++++++++++
+mode: train
+train_data_length:23180,batch_size:32,steps in each epoch:724
+dev_data_length:4636
+
+epoch:1/50
+start evaluate engines...
+class_name: person, precision: 0.9768, recall: 0.9497, f1: 0.9630
+class_name: location, precision: 0.9271, recall: 0.8902, f1: 0.9083
+class_name: organization, precision: 0.9356, recall: 0.8466, f1: 0.8889
+time consumption:6.92(min)
+saved model successful...
+aver_loss: 0.0468, f1: 0.9201, best_f1: 0.9201, best_epoch: 1 
+
+epoch:2/50
+start evaluate engines...
+class_name: person, precision: 0.9822, recall: 0.9661, f1: 0.9741
+class_name: location, precision: 0.9708, recall: 0.8738, f1: 0.9197
+class_name: organization, precision: 0.9507, recall: 0.8238, f1: 0.8827
+time consumption:6.97(min)
+saved model successful...
+aver_loss: 0.0082, f1: 0.9255, best_f1: 0.9255, best_epoch: 2 
+
+epoch:3/50
+start evaluate engines...
+class_name: person, precision: 0.9860, recall: 0.9582, f1: 0.9719
+class_name: location, precision: 0.9594, recall: 0.9017, f1: 0.9297
+class_name: organization, precision: 0.9413, recall: 0.8714, f1: 0.9050
+time consumption:6.97(min)
+saved model successful...
+aver_loss: 0.0041, f1: 0.9355, best_f1: 0.9355, best_epoch: 3 
+
+epoch:4/50
+start evaluate engines...
+class_name: person, precision: 0.9890, recall: 0.9644, f1: 0.9765
+class_name: location, precision: 0.9558, recall: 0.9027, f1: 0.9285
+class_name: organization, precision: 0.9418, recall: 0.8568, f1: 0.8973
+time consumption:6.98(min)
+aver_loss: 0.0027, f1: 0.9341, best_f1: 0.9355, best_epoch: 3 
+
+epoch:5/50
+start evaluate engines...
+class_name: person, precision: 0.9860, recall: 0.9565, f1: 0.9710
+class_name: location, precision: 0.9525, recall: 0.9024, f1: 0.9267
+class_name: organization, precision: 0.9440, recall: 0.8587, f1: 0.8993
+time consumption:7.00(min)
+aver_loss: 0.0023, f1: 0.9324, best_f1: 0.9355, best_epoch: 3 
+
+epoch:6/50

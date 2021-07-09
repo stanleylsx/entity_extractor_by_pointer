@@ -92,7 +92,7 @@ def predict_one(configs, tokenizer, sentence, bert_model, model, device):
     """
     categories = {configs.class_name[index]: index for index in range(0, len(configs.class_name))}
     reverse_categories = {class_id: class_name for class_name, class_id in categories.items()}
-    results = extract_entities(configs, tokenizer, sentence, bert_model, model, device)
+    results = extract_entities(configs, tokenizer, sentence, model, device)
     results_dict = {}
     for class_id, result_set in results.items():
         results_dict[reverse_categories[class_id]] = list(result_set)

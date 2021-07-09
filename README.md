@@ -19,7 +19,7 @@
 
 ## 原理
 
-![模型原理图](https://img-blog.csdnimg.cn/20200913193759358.png)
+![模型原理图](https://img-blog.csdnimg.cn/20210709121725362.png)
 
 ## 运行
 
@@ -89,7 +89,7 @@ mode=interactive_predict
 
 * example_datasets2
 
-![img05](https://img-blog.csdnimg.cn/20200913193759376.png)
+![img05](https://img-blog.csdnimg.cn/20210709121748728.png)
 
 ## 参考
 
