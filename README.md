@@ -67,7 +67,7 @@ decision_threshold=0.5
 
 * example_datasets2
 
-![example_datasets2](https://img-blog.csdnimg.cn/20200913193759376.png)
+![example_datasets2](https://img-blog.csdnimg.cn/20210709121748728.png)
 
 
 ## 测试
@@ -88,7 +88,7 @@ mode=interactive_predict
 
 * example_datasets2
 
-![img05](https://img-blog.csdnimg.cn/20210709121748728.png)
+![img05](https://img-blog.csdnimg.cn/20200913193759376.png)
 
 ## 参考
 
