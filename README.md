@@ -88,7 +88,7 @@ mode=interactive_predict
 
 * example_datasets2
 
-![img05](https://img-blog.csdnimg.cn/20210709121748728.png)
+![img05](https://img-blog.csdnimg.cn/20200913193759376.png)
 
 ## 参考
 
