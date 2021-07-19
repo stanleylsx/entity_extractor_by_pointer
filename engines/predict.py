@@ -86,7 +86,7 @@ def evaluate(configs, model, dev_data, device):
     return results_of_each_entity
 
 
-def predict_one(configs, tokenizer, sentence, bert_model, model, device):
+def predict_one(configs, tokenizer, sentence, model, device):
     """
     预测接口
     """
