@@ -55,5 +55,5 @@ if __name__ == '__main__':
             sentence = input()
             if sentence == 'exit':
                 break
-            result = predict_one(configs, tokenizer, sentence, bert_model, model, device)
+            result = predict_one(configs, tokenizer, sentence, model, device)
             print(result)
