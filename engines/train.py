@@ -7,8 +7,8 @@ from engines.model import Model
 from transformers import AdamW
 from tqdm import tqdm
 from torch.utils.data import DataLoader
-from engines.data import DataGenerator, MyDataset, collate_fn
-from engines.predict import evaluate
+from engines.data import DataGenerator
+from engines.predict import Predictor
 import json
 import torch
 import time
@@ -16,20 +16,18 @@ import os
 
 
 def train(configs, device, logger):
+    predictor = Predictor(configs, device, logger)
     train_file = configs.datasets_fold + '/' + configs.train_file
     dev_file = configs.datasets_fold + '/' + configs.dev_file
     train_data = json.load(open(train_file, encoding='utf-8'))
     dev_data = json.load(open(dev_file, encoding='utf-8'))
     train_data_generator = DataGenerator(configs, train_data, logger=logger)
     logger.info('dev_data_length:{}\n'.format(len(dev_data)))
-    sentence, segment, attention_mask, entity_vectors = train_data_generator.prepare_data()
-    torch_dataset = MyDataset(sentence, segment, attention_mask, entity_vectors)
+    train_dataset = train_data_generator.prepare_data()
     loader = DataLoader(
-        dataset=torch_dataset,  # torch TensorDataset format
+        dataset=train_dataset,  # torch TensorDataset format
         batch_size=configs.batch_size,  # mini batch size
         shuffle=True,  # random shuffle for training
-        num_workers=0,
-        collate_fn=collate_fn,  # subprocesses for loading data
     )
     learning_rate = configs.learning_rate
     adam_epsilon = 1e-05
@@ -46,10 +44,11 @@ def train(configs, device, logger):
         logger.info('epoch:{}/{}'.format(i + 1, configs.epoch))
         start_time = time.time()
         step, loss, loss_sum = 0, 0.0, 0.0
-        for step, loader_res in tqdm(iter(enumerate(loader))):
-            sentences = loader_res['sentence'].to(device)
-            attention_mask = loader_res['attention_mask'].to(device)
-            entity_vec = loader_res['entity_vec'].to(device)
+        for batch in tqdm(loader):
+            sentences, _, attention_mask, entity_vec = batch
+            sentences = sentences.to(device)
+            attention_mask = attention_mask.to(device)
+            entity_vec = entity_vec.to(device)
             model_output = model(sentences, attention_mask).to(device)
             loss = loss_function(model_output, entity_vec.float())
             loss = torch.sum(torch.mean(loss, 3), 2)
@@ -58,9 +57,13 @@ def train(configs, device, logger):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+            step = step + 1
+
         model.eval()
         logger.info('start evaluate engines...')
-        results_of_each_entity = evaluate(configs, model, dev_data, device)
+
+        results_of_each_entity = predictor.evaluate(model, dev_data)
+
         time_span = (time.time() - start_time) / 60
         f1 = 0.0
         for class_id, performance in results_of_each_entity.items():
