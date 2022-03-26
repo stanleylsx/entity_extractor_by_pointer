@@ -4,7 +4,7 @@
 # @File : data.py
 # @Software: PyCharm
 from transformers import BertTokenizer
-from torch.utils.data import Dataset
+from torch.utils.data import TensorDataset
 from tqdm import tqdm
 import torch
 import numpy as np
@@ -81,42 +81,10 @@ class DataGenerator:
                 segment_vectors.append(segment_ids)
                 attention_mask_vectors.append(attention_mask)
                 entity_vectors.append(entity_vector)
-        sentence_vectors_np = np.array(sentence_vectors)
-        segment_vectors_np = np.array(segment_vectors)
-        attention_mask_vectors_np = np.array(attention_mask_vectors)
-        entity_vectors_np = np.array(entity_vectors)
-        return sentence_vectors_np, segment_vectors_np, attention_mask_vectors_np, entity_vectors_np
+        sentence_vectors = torch.tensor(sentence_vectors)
+        segment_vectors = torch.tensor(segment_vectors)
+        attention_mask_vectors = torch.tensor(attention_mask_vectors)
+        entity_vectors = torch.tensor(entity_vectors)
+        dataset = TensorDataset(sentence_vectors, segment_vectors, attention_mask_vectors, entity_vectors)
+        return dataset
 
-
-class MyDataset(Dataset):
-    """
-    下载数据、初始化数据，都可以在这里完成
-    """
-
-    def __init__(self, _sentence_vectors, _segment_vectors, _attention_mask_vectors, _entity_vectors):
-        self.sentence_vectors = _sentence_vectors
-        self.segment_vectors = _segment_vectors
-        self.attention_mask_vectors = _attention_mask_vectors
-        self.entity_vectors = _entity_vectors
-        self.len = len(self.sentence_vectors)
-
-    def __getitem__(self, index):
-        return self.sentence_vectors[index], self.segment_vectors[index], self.attention_mask_vectors[index],\
-               self.entity_vectors[index]
-
-    def __len__(self):
-        return self.len
-
-
-def collate_fn(data):
-    """
-    如何取样本的，定义自己的函数来准确地实现想要的功能
-    """
-    sentence = np.array([item[0] for item in data], np.int32)
-    segment = np.array([item[1] for item in data], np.int32)
-    attention_mask = np.array([item[2] for item in data], np.int32)
-    entity_vec = np.array([item[3] for item in data], np.int32)
-    return {'sentence': torch.LongTensor(sentence),
-            'segment': torch.LongTensor(segment),
-            'attention_mask': torch.LongTensor(attention_mask),
-            'entity_vec': torch.LongTensor(entity_vec)}
