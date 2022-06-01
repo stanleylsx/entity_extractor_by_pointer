@@ -6,8 +6,9 @@
 
 ## 环境
 * python 3.6.7
-* transformers==3.0.2
-* torch==1.6.0
+* torch==1.9.0+cu102
+* tqdm==4.48.2
+* transformers==4.8.2
 
 其他环境见requirements.txt
 
