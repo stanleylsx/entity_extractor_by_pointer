@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 import torch
 import torch.nn as nn
+from transformers import BertModel
 
 
 class EffiGlobalPointer(nn.Module):
     def __init__(self, encoder, ent_type_size, inner_dim, rope=True):
-        # encoder: RoBerta-Large as encoder
+        # encoder: Bert as encoder
         # inner_dim: 64
         # ent_type_size: ent_cls_num
         super(EffiGlobalPointer, self).__init__()
-        self.encoder = encoder
+        self.encoder = BertModel.from_pretrained('bert-base-chinese')
         self.ent_type_size = ent_type_size
         self.inner_dim = inner_dim
         self.hidden_size = encoder.config.hidden_size
@@ -56,7 +57,6 @@ class EffiGlobalPointer(nn.Module):
         return logits
 
     def forward(self, input_ids, attention_mask, token_type_ids):
-        self.device = input_ids.device
         context_outputs = self.encoder(input_ids, attention_mask, token_type_ids)
         last_hidden_state = context_outputs.last_hidden_state  # [2, 43, 768]
         seq_len = last_hidden_state.size()[1]
