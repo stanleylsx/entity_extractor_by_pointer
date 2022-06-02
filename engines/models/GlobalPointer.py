@@ -67,7 +67,7 @@ class EffiGlobalPointer(nn.Module):
             pos = self.sinusoidal_position_embedding(seq_len, self.inner_dim)
             # 是将奇数列信息抽取出来也就是cosm拿出来并复制
             cos_pos = pos[..., 1::2].repeat_interleave(2, dim=-1)
-            # 是将偶数列信息抽取出来也就是sinm 拿出来并复制
+            # 是将偶数列信息抽取出来也就是sinm拿出来并复制
             sin_pos = pos[..., ::2].repeat_interleave(2, dim=-1)
             # 奇数列加上负号 得到第二个q的矩阵
             qw2 = torch.stack([-qw[..., 1::2], qw[..., ::2]], -1)
