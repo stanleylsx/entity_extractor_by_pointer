@@ -8,17 +8,17 @@ from torch import nn
 from transformers import BertModel
 
 
-class Model(nn.Module, ABC):
+class BinaryPointer(nn.Module, ABC):
     def __init__(self, hidden_size, num_labels):
-        super().__init__()
+        super(BinaryPointer, self).__init__()
         self.num_labels = num_labels
         self.layer_norm = nn.LayerNorm(hidden_size, eps=1e-12)
         self.bert_model = BertModel.from_pretrained('bert-base-chinese')
         self.fc = nn.Linear(hidden_size, 2 * num_labels)
         self.sigmoid = nn.Sigmoid()
 
-    def forward(self, sentences, attention_mask):
-        bert_hidden_states = self.bert_model(sentences, attention_mask=attention_mask)[0]
+    def forward(self, input_ids, attention_mask, token_type_ids):
+        bert_hidden_states = self.bert_model(input_ids, attention_mask=attention_mask)[0]
         layer_hidden = self.layer_norm(bert_hidden_states)
         fc_results = self.fc(layer_hidden)
         output = self.sigmoid(fc_results)

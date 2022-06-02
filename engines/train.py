@@ -3,7 +3,7 @@
 # @Email : gzlishouxian@gmail.com
 # @File : train.py
 # @Software: PyCharm
-from engines.model import Model
+from engines.models.BinaryPointer import BinaryPointer
 from transformers import AdamW
 from tqdm import tqdm
 from torch.utils.data import DataLoader
@@ -32,7 +32,7 @@ def train(configs, device, logger):
     learning_rate = configs.learning_rate
     adam_epsilon = 1e-05
     num_labels = len(configs.class_name)
-    model = Model(hidden_size=768, num_labels=num_labels).to(device)
+    model = BinaryPointer(hidden_size=768, num_labels=num_labels).to(device)
     params = list(model.parameters())
     optimizer = AdamW(params, lr=learning_rate, eps=adam_epsilon)
     loss_function = torch.nn.BCELoss(reduction='none')
