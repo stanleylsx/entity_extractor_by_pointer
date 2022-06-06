@@ -6,28 +6,24 @@
 from transformers import BertTokenizer
 from torch.utils.data import TensorDataset
 from tqdm import tqdm
+from engines.utils.rematch import rematch
 import torch
 import numpy as np
 import re
 
 
-class DataGenerator:
-    def __init__(self, configs, data, logger):
-        self.data = data
-        self.batch_size = configs.batch_size
-        self.max_sequence_length = configs.max_sequence_length
-        assert self.max_sequence_length <= 512, '超过序列最大长度设定'
-        logger.info('train_data_length:{},batch_size:{},steps in each epoch:{}'
-                    .format(len(data), self.batch_size, len(data)//self.batch_size))
-        assert len(data) >= self.batch_size, '数据量不够一个批次'
-        self.categories = {configs.class_name[index]: index for index in range(0, len(configs.class_name))}
+class DataManager:
+    def __init__(self, configs, logger):
+        self.logger = logger
+        self.configs = configs
+        self.batch_size = configs['batch_size']
+        self.max_sequence_length = configs['max_sequence_length']
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
-        self.steps = len(self.data) // self.batch_size
-        if len(self.data) % self.batch_size != 0:
-            self.steps += 1
 
-    def __len__(self):
-        return self.steps
+        self.classes = configs['classes']
+        self.num_labels = len(self.classes)
+        self.categories = {configs['classes'][index]: index for index in range(0, len(configs['classes']))}
+        self.reverse_categories = {class_id: class_name for class_name, class_id in self.categories.items()}
 
     @staticmethod
     def get_index(text_token, token):
@@ -45,12 +41,12 @@ class DataGenerator:
             token = token[:self.max_sequence_length]
         return token
 
-    def prepare_data(self):
+    def prepare_data(self, data):
         sentence_vectors = []
         segment_vectors = []
         attention_mask_vectors = []
         entity_vectors = []
-        for item in tqdm(self.data):
+        for item in tqdm(data):
             text = item.get('text')
             token_results = self.tokenizer(text)
             token_ids = self.padding(token_results.get('input_ids'))
@@ -88,3 +84,26 @@ class DataGenerator:
         dataset = TensorDataset(sentence_vectors, segment_vectors, attention_mask_vectors, entity_vectors)
         return dataset
 
+    def extract_entities(self, text, model_outputs):
+        """
+        从验证集中预测到相关实体
+        """
+        predict_results = {}
+        encode_results = self.tokenizer(text, padding='max_length')
+        input_ids = encode_results.get('input_ids')
+        token = self.tokenizer.convert_ids_to_tokens(input_ids)
+        mapping = rematch(text, token)
+        decision_threshold = float(self.configs['decision_threshold'])
+        for model_output in model_outputs:
+            start = np.where(model_output[:, :, 0] > decision_threshold)
+            end = np.where(model_output[:, :, 1] > decision_threshold)
+            for _start, predicate1 in zip(*start):
+                for _end, predicate2 in zip(*end):
+                    if _start <= _end and predicate1 == predicate2:
+                        if len(mapping[_start]) > 0 and len(mapping[_end]) > 0:
+                            start_in_text = mapping[_start][0]
+                            end_in_text = mapping[_end][-1]
+                            entity_text = text[start_in_text: end_in_text + 1]
+                            predict_results.setdefault(predicate1, set()).add(entity_text)
+                        break
+        return predict_results

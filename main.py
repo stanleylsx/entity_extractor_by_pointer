@@ -4,38 +4,61 @@
 # @File : main.py
 # @Software: PyCharm
 from engines.utils.logger import get_logger
-from configure import Configure
-from engines.train import train
-from engines.model import Model
-from engines.predict import Predictor
-import argparse
-import os
+from configure import use_cuda, cuda_device, configure, mode
+from engines.data import DataManager
 import torch
+import os
+import json
+
+
+def fold_check(configures):
+    if configures['checkpoints_dir'] == '':
+        raise Exception('checkpoints_dir did not set...')
+
+    if not os.path.exists(configures['checkpoints_dir']):
+        print('checkpoints fold not found, creating...')
+        os.makedirs(configures['checkpoints_dir'])
+
+    if not os.path.exists(configures['checkpoints_dir'] + '/logs'):
+        print('log fold not found, creating...')
+        os.mkdir(configures['checkpoints_dir'] + '/logs')
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Entity extractor by binary tagging')
-    parser.add_argument('--config_file', default='system.config', help='Configuration File')
-    args = parser.parse_args()
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-    configs = Configure(config_file=args.config_file)
-    logger = get_logger(configs.log_dir)
-    configs.show_data_summary(logger)
-    mode = configs.mode.lower()
+
+    fold_check(configure)
+    logger = get_logger(configure['checkpoints_dir'] + '/logs')
+
+    if use_cuda:
+        if torch.cuda.is_available():
+            if cuda_device == -1:
+                device = torch.device('cuda')
+            else:
+                device = torch.device(f'cuda:{cuda_device}')
+        else:
+            raise ValueError(
+                "'use_cuda' set to True when cuda is unavailable."
+                " Make sure CUDA is available or set use_cuda=False."
+            )
+    else:
+        device = 'cpu'
+    logger.info(f'device: {device}')
+    data_manager = DataManager(configure, logger=logger)
+
     if mode == 'train':
+        logger.info(json.dumps(configure, indent=2, ensure_ascii=False))
+        from engines.train import Train
         logger.info('mode: train')
-        train(configs, device, logger)
+        Train(configure, data_manager, device, logger).train()
     elif mode == 'interactive_predict':
+        logger.info(json.dumps(configure, indent=2, ensure_ascii=False))
         logger.info('mode: predict_one')
-        num_labels = len(configs.class_name)
-        model = Model(hidden_size=768, num_labels=num_labels).to(device)
-        model.load_state_dict(torch.load(os.path.join(configs.checkpoints_dir, 'best_model.pkl')))
-        model.eval()
-        predictor = Predictor(configs, device, logger)
+        from engines.predict import Predictor
+        predictor = Predictor(configure, data_manager, device, logger)
         while True:
             logger.info('please input a sentence (enter [exit] to exit.)')
             sentence = input()
             if sentence == 'exit':
                 break
-            result = predictor.predict_one(sentence, model)
+            result = predictor.predict_one(sentence)
             print(result)
