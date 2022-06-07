@@ -55,6 +55,7 @@ if __name__ == '__main__':
         logger.info('mode: predict_one')
         from engines.predict import Predictor
         predictor = Predictor(configure, data_manager, device, logger)
+        predictor.predict_one('warm up')
         while True:
             logger.info('please input a sentence (enter [exit] to exit.)')
             sentence = input()

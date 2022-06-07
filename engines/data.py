@@ -3,7 +3,7 @@
 # @Email : gzlishouxian@gmail.com
 # @File : data.py
 # @Software: PyCharm
-from transformers import BertTokenizer
+from transformers import BertTokenizerFast
 from torch.utils.data import TensorDataset
 from tqdm import tqdm
 from engines.utils.rematch import rematch
@@ -18,21 +18,12 @@ class DataManager:
         self.configs = configs
         self.batch_size = configs['batch_size']
         self.max_sequence_length = configs['max_sequence_length']
-        self.tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
+        self.tokenizer = BertTokenizerFast.from_pretrained('bert-base-chinese')
 
         self.classes = configs['classes']
         self.num_labels = len(self.classes)
         self.categories = {configs['classes'][index]: index for index in range(0, len(configs['classes']))}
         self.reverse_categories = {class_id: class_name for class_name, class_id in self.categories.items()}
-
-    @staticmethod
-    def get_index(text_token, token):
-        text_token_str = '#'.join([str(index) for index in text_token])
-        token_str = '#'.join([str(index) for index in token])
-        start_str_index = re.search(token_str, text_token_str).start()
-        start_index = text_token_str[:start_str_index].count('#')
-        end_index = start_index + len(token)
-        return start_index, end_index - 1
 
     def padding(self, token):
         if len(token) < self.max_sequence_length:
@@ -42,49 +33,49 @@ class DataManager:
         return token
 
     def prepare_data(self, data):
-        sentence_vectors = []
-        segment_vectors = []
-        attention_mask_vectors = []
-        entity_vectors = []
-        for item in tqdm(data):
+        text_list = []
+        entity_results_list = []
+        token_ids_list = []
+        segment_ids_list = []
+        attention_mask_list = []
+        label_vectors = []
+        for item in data:
             text = item.get('text')
+            entity_results = {}
             token_results = self.tokenizer(text)
             token_ids = self.padding(token_results.get('input_ids'))
             segment_ids = self.padding(token_results.get('token_type_ids'))
             attention_mask = self.padding(token_results.get('attention_mask'))
-            entity_vector = np.zeros((len(token_ids), len(self.categories), 2))
-            try:
-                for class_name, class_id in self.categories.items():
-                    item_text = item.get(class_name)
-                    if item_text is not None:
-                        if type(item_text) is str:
-                            item_token = self.tokenizer(item_text).get('input_ids')
-                            item_token = item_token[1:-1]
-                            start_index, end_index = self.get_index(token_ids, item_token)
-                            entity_vector[start_index, class_id, 0] = 1
-                            entity_vector[end_index, class_id, 1] = 1
-                        elif type(item_text) is list:
-                            for sub_item in item_text:
-                                item_token = self.tokenizer(sub_item).get('input_ids')
-                                item_token = item_token[1:-1]
-                                start_index, end_index = self.get_index(token_ids, item_token)
-                                entity_vector[start_index, class_id, 0] = 1
-                                entity_vector[end_index, class_id, 1] = 1
-            except AttributeError:
-                continue
-            else:
-                sentence_vectors.append(token_ids)
-                segment_vectors.append(segment_ids)
-                attention_mask_vectors.append(attention_mask)
-                entity_vectors.append(entity_vector)
-        sentence_vectors = torch.tensor(sentence_vectors)
-        segment_vectors = torch.tensor(segment_vectors)
-        attention_mask_vectors = torch.tensor(attention_mask_vectors)
-        entity_vectors = torch.tensor(entity_vectors)
-        dataset = TensorDataset(sentence_vectors, segment_vectors, attention_mask_vectors, entity_vectors)
-        return dataset
+            label_vector = np.zeros((len(token_ids), len(self.categories), 2))
+            for entity in item.get('entities'):
+                start_idx = entity['start_idx']
+                end_idx = entity['end_idx']
+                type_class = entity['type']
+                class_id = self.categories[type_class]
+                entity_results.setdefault(class_id, set()).add(entity['entity'])
+                token2char_span_mapping = self.tokenizer(text, return_offsets_mapping=True,
+                                                         max_length=self.max_sequence_length,
+                                                         truncation=True)['offset_mapping']
+                start_mapping = {j[0]: i for i, j in enumerate(token2char_span_mapping) if j != (0, 0)}
+                end_mapping = {j[-1] - 1: i for i, j in enumerate(token2char_span_mapping) if j != (0, 0)}
+                if start_idx in start_mapping and end_idx in end_mapping:
+                    start_in_tokens = start_mapping[start_idx]
+                    end_in_tokens = end_mapping[end_idx]
+                    label_vector[start_in_tokens, class_id, 0] = 1
+                    label_vector[end_in_tokens, class_id, 1] = 1
+            text_list.append(text)
+            entity_results_list.append(entity_results)
+            token_ids_list.append(token_ids)
+            segment_ids_list.append(segment_ids)
+            attention_mask_list.append(attention_mask)
+            label_vectors.append(label_vector)
+        token_ids_list = torch.tensor(token_ids_list)
+        segment_ids_list = torch.tensor(segment_ids_list)
+        attention_mask_list = torch.tensor(attention_mask_list)
+        label_vectors = torch.tensor(label_vectors)
+        return text_list, entity_results_list, token_ids_list, segment_ids_list, attention_mask_list, label_vectors
 
-    def extract_entities(self, text, model_outputs):
+    def extract_entities(self, text, model_output):
         """
         从验证集中预测到相关实体
         """
@@ -94,9 +85,9 @@ class DataManager:
         token = self.tokenizer.convert_ids_to_tokens(input_ids)
         mapping = rematch(text, token)
         decision_threshold = float(self.configs['decision_threshold'])
-        for model_output in model_outputs:
-            start = np.where(model_output[:, :, 0] > decision_threshold)
-            end = np.where(model_output[:, :, 1] > decision_threshold)
+        for output in model_output:
+            start = np.where(output[:, :, 0] > decision_threshold)
+            end = np.where(output[:, :, 1] > decision_threshold)
             for _start, predicate1 in zip(*start):
                 for _end, predicate2 in zip(*end):
                     if _start <= _end and predicate1 == predicate2:

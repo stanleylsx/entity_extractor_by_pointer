@@ -19,9 +19,9 @@ cuda_device = -1
 
 configure = {
     # 训练数据集
-    'train_file': 'data/example_datasets1/train_data.json',
+    'train_file': 'data/example_datasets2/train_data.json',
     # 验证数据集
-    'dev_file': 'data/example_datasets1/dev_data.json',
+    'dev_file': 'data/example_datasets2/dev_data.json',
     # 没有验证集时，从训练集抽取验证集比例
     # 'validation_rate': 0.15,
     # 测试数据集
@@ -29,7 +29,7 @@ configure = {
     # 模型保存的文件夹
     'checkpoints_dir': 'checkpoints',
     # 类别列表
-    'classes': ['company', 'position', 'detail'],
+    'classes': ['person', 'location', 'organization'],
     # decision_threshold
     'decision_threshold': 0.5,
     # 句子最大长度
