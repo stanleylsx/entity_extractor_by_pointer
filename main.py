@@ -25,7 +25,7 @@ def fold_check(configures):
 
 
 if __name__ == '__main__':
-
+    os.environ['TOKENIZERS_PARALLELISM'] = 'false'
     fold_check(configure)
     logger = get_logger(configure['checkpoints_dir'] + '/logs')
 
