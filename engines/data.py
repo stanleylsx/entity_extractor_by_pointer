@@ -4,7 +4,6 @@
 # @File : data.py
 # @Software: PyCharm
 from transformers import BertTokenizerFast
-from engines.utils.rematch import rematch
 import torch
 import numpy as np
 
@@ -69,7 +68,7 @@ class DataManager:
         token_ids_list = torch.tensor(token_ids_list)
         segment_ids_list = torch.tensor(segment_ids_list)
         attention_mask_list = torch.tensor(attention_mask_list)
-        label_vectors = torch.tensor(label_vectors)
+        label_vectors = torch.tensor(np.array(label_vectors))
         return text_list, entity_results_list, token_ids_list, segment_ids_list, attention_mask_list, label_vectors
 
     def extract_entities(self, text, model_output):
@@ -77,10 +76,11 @@ class DataManager:
         从验证集中预测到相关实体
         """
         predict_results = {}
-        encode_results = self.tokenizer(text, padding='max_length')
-        input_ids = encode_results.get('input_ids')
-        token = self.tokenizer.convert_ids_to_tokens(input_ids)
-        mapping = rematch(text, token)
+        token2char_span_mapping = self.tokenizer(text, return_offsets_mapping=True,
+                                                 max_length=self.max_sequence_length,
+                                                 truncation=True)['offset_mapping']
+        start_mapping = {i: j[0] for i, j in enumerate(token2char_span_mapping) if j != (0, 0)}
+        end_mapping = {i: j[-1] - 1 for i, j in enumerate(token2char_span_mapping) if j != (0, 0)}
         decision_threshold = float(self.configs['decision_threshold'])
         for output in model_output:
             start = np.where(output[:, :, 0] > decision_threshold)
@@ -88,9 +88,9 @@ class DataManager:
             for _start, predicate1 in zip(*start):
                 for _end, predicate2 in zip(*end):
                     if _start <= _end and predicate1 == predicate2:
-                        if len(mapping[_start]) > 0 and len(mapping[_end]) > 0:
-                            start_in_text = mapping[_start][0]
-                            end_in_text = mapping[_end][-1]
+                        if _start in start_mapping and _end in end_mapping:
+                            start_in_text = start_mapping[_start]
+                            end_in_text = end_mapping[_end]
                             entity_text = text[start_in_text: end_in_text + 1]
                             predict_results.setdefault(predicate1, set()).add(entity_text)
                         break
