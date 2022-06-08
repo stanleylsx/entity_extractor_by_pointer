@@ -106,8 +106,9 @@ class DataManager:
         else:
             for class_id, start, end in zip(*np.where(model_output > 0)):
                 if start <= end:
-                    start_in_text = start_mapping[start]
-                    end_in_text = end_mapping[end]
-                    entity_text = text[start_in_text: end_in_text + 1]
-                    predict_results.setdefault(class_id, set()).add(entity_text)
+                    if start in start_mapping and end in end_mapping:
+                        start_in_text = start_mapping[start]
+                        end_in_text = end_mapping[end]
+                        entity_text = text[start_in_text: end_in_text + 1]
+                        predict_results.setdefault(class_id, set()).add(entity_text)
         return predict_results
