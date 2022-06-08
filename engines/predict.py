@@ -28,7 +28,8 @@ class Predictor:
         attention_mask = torch.unsqueeze(torch.LongTensor(encode_results.get('attention_mask')), 0).to(self.device)
         segment_ids = torch.unsqueeze(torch.LongTensor(encode_results.get('token_type_ids')), 0).to(self.device)
         model_outputs = self.model(token_ids, attention_mask, segment_ids).detach().to('cpu')
-        results = self.data_manager.extract_entities(sentence, model_outputs)
+        model_output = torch.squeeze(model_outputs)
+        results = self.data_manager.extract_entities(sentence, model_output)
         results_dict = {}
         for class_id, result_set in results.items():
             results_dict[self.data_manager.reverse_categories[class_id]] = list(result_set)

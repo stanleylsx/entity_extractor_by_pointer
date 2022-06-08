@@ -37,8 +37,7 @@ class Train:
             dataset=train_data,
             batch_size=self.configs['batch_size'],
             collate_fn=self.data_manager.prepare_data,
-            shuffle=True,
-            num_workers=4,
+            shuffle=True
         )
         dev_loader = DataLoader(
             dataset=dev_data,
@@ -113,7 +112,6 @@ class Train:
                 attention_mask = attention_mask.to(self.device)
                 model_outputs = self.model(token_ids, attention_mask, segment_ids).detach().to('cpu')
                 for text, model_output, entity_result in zip(texts, model_outputs, entity_results):
-                    model_output = torch.unsqueeze(model_output, 0)
                     p_results = self.data_manager.extract_entities(text, model_output)
                     for class_id, entity_set in entity_result.items():
                         p_entity_set = p_results.get(class_id)
