@@ -45,6 +45,8 @@ configure = {
     'batch_size': 16,
     # dropout rate
     'dropout_rate': 0.5,
+    # 每print_per_batch打印损失函数
+    'print_per_batch': 100,
     # learning_rate
     'learning_rate': 5e-5,
     # 训练是否提前结束微调

@@ -1,0 +1,42 @@
+2022-06-08 23:48:21
+device: cuda
+{
+  "train_file": "data/example_datasets3/train_data.json",
+  "dev_file": "data/example_datasets3/dev_data.json",
+  "test_file": "",
+  "model_type": "bp",
+  "checkpoints_dir": "checkpoints",
+  "classes": [
+    "pro",
+    "dis",
+    "sym",
+    "ite",
+    "bod",
+    "dru",
+    "mic",
+    "equ",
+    "dep"
+  ],
+  "decision_threshold": 0.5,
+  "use_multilabel_categorical_cross_entropy": true,
+  "max_sequence_length": 100,
+  "epoch": 50,
+  "batch_size": 32,
+  "dropout_rate": 0.5,
+  "learning_rate": 5e-05,
+  "is_early_stop": true,
+  "patient": 5
+}
+mode: train
+loading train data...
+
+epoch:1/50
+training_loss:5.229312
+training_loss:4.871839
+training_loss:4.910363
+training_loss:4.877042
+training_loss:4.887585
+training_loss:4.886842
+training_loss:4.813532
+training_loss:4.828228
+training_loss:4.888311
