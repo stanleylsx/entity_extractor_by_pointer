@@ -90,7 +90,7 @@ class Train:
                 loss.backward()
                 self.optimizer.step()
 
-                if step % 10 == 0:
+                if step % self.configs['print_per_batch'] == 0:
                     self.logger.info('training_loss:%f' % loss)
 
                 step = step + 1
