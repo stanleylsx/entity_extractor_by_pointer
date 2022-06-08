@@ -4,12 +4,9 @@
 # @File : data.py
 # @Software: PyCharm
 from transformers import BertTokenizerFast
-from torch.utils.data import TensorDataset
-from tqdm import tqdm
 from engines.utils.rematch import rematch
 import torch
 import numpy as np
-import re
 
 
 class DataManager:
@@ -51,14 +48,14 @@ class DataManager:
                 start_idx = entity['start_idx']
                 end_idx = entity['end_idx']
                 type_class = entity['type']
-                class_id = self.categories[type_class]
-                entity_results.setdefault(class_id, set()).add(entity['entity'])
                 token2char_span_mapping = self.tokenizer(text, return_offsets_mapping=True,
                                                          max_length=self.max_sequence_length,
                                                          truncation=True)['offset_mapping']
                 start_mapping = {j[0]: i for i, j in enumerate(token2char_span_mapping) if j != (0, 0)}
                 end_mapping = {j[-1] - 1: i for i, j in enumerate(token2char_span_mapping) if j != (0, 0)}
                 if start_idx in start_mapping and end_idx in end_mapping:
+                    class_id = self.categories[type_class]
+                    entity_results.setdefault(class_id, set()).add(entity['entity'])
                     start_in_tokens = start_mapping[start_idx]
                     end_in_tokens = end_mapping[end_idx]
                     label_vector[start_in_tokens, class_id, 0] = 1
