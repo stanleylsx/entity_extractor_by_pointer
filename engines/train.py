@@ -19,13 +19,26 @@ class Train:
         self.device = device
         self.logger = logger
         self.data_manager = data_manager
+        self.batch_size = self.configs['batch_size']
 
         learning_rate = configs['learning_rate']
         num_labels = len(configs['classes'])
-        self.model = BinaryPointer(num_labels=num_labels).to(device)
+
+        if configs['model_type'] == 'bp':
+            from engines.models.BinaryPointer import BinaryPointer
+            self.model = BinaryPointer(num_labels=num_labels).to(device)
+        else:
+            from engines.models.GlobalPointer import EffiGlobalPointer
+            self.model = EffiGlobalPointer(num_labels=num_labels, device=device).to(device)
+
         params = list(self.model.parameters())
         self.optimizer = AdamW(params, lr=learning_rate)
-        self.loss_function = torch.nn.BCELoss(reduction='none')
+
+        if configs['use_multilabel_categorical_cross_entropy']:
+            from engines.utils.losses import MultilabelCategoricalCrossEntropy
+            self.loss_function = MultilabelCategoricalCrossEntropy()
+        else:
+            self.loss_function = torch.nn.BCELoss(reduction='none')
 
     def train(self):
         train_file = self.configs['train_file']
@@ -35,13 +48,13 @@ class Train:
         self.logger.info('loading train data...')
         train_loader = DataLoader(
             dataset=train_data,
-            batch_size=self.configs['batch_size'],
+            batch_size=self.batch_size,
             collate_fn=self.data_manager.prepare_data,
             shuffle=True
         )
         dev_loader = DataLoader(
             dataset=dev_data,
-            batch_size=self.configs['batch_size'],
+            batch_size=self.batch_size,
             collate_fn=self.data_manager.prepare_data,
         )
         best_f1 = 0
@@ -56,17 +69,30 @@ class Train:
             step, loss, loss_sum = 0, 0.0, 0.0
             for batch in tqdm(train_loader):
                 _, _, token_ids, token_type_ids, attention_mask, label_vectors = batch
+                batch_size = token_ids.size(0)
                 token_ids = token_ids.to(self.device)
                 attention_mask = attention_mask.to(self.device)
+                token_type_ids = token_type_ids.to(self.device)
                 label_vectors = label_vectors.to(self.device)
                 model_output = self.model(token_ids, attention_mask, token_type_ids).to(self.device)
-                loss = self.loss_function(model_output, label_vectors.float())
-                loss = torch.sum(torch.mean(loss, 3), 2)
-                loss = torch.sum(loss * attention_mask) / torch.sum(attention_mask)
+
+                if self.configs['use_multilabel_categorical_cross_entropy']:
+                    model_output = model_output.reshape(batch_size * self.data_manager.num_labels * 2, -1)
+                    label_vectors = label_vectors.reshape(batch_size * self.data_manager.num_labels * 2, -1)
+                    loss = self.loss_function(model_output, label_vectors)
+                else:
+                    loss = self.loss_function(model_output, label_vectors.float())
+                    loss = torch.sum(torch.mean(loss, 3), 2)
+                    loss = torch.sum(loss * attention_mask) / torch.sum(attention_mask)
+
                 loss_sum += loss.item()
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
+
+                if step % 10 == 0:
+                    self.logger.info('training_loss:%f' % loss)
+
                 step = step + 1
 
             f1 = self.validate(dev_loader)

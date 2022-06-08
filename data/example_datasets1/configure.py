@@ -3,7 +3,6 @@
 # @Email : gzlishouxian@gmail.com
 # @File : configure.py
 # @Software: PyCharm
-import sys
 
 # 模式
 # train:训练分类器
@@ -11,7 +10,7 @@ import sys
 # test:跑测试集
 # convert2tf:将torch模型保存为tf框架的pb格式文件
 # [train, interactive_predict, test, convert2tf]
-mode = 'interactive_predict'
+mode = 'train'
 
 # 使用GPU设备
 use_cuda = True
@@ -26,12 +25,18 @@ configure = {
     # 'validation_rate': 0.15,
     # 测试数据集
     'test_file': '',
+    # 使用的模型
+    # bp: binary pointer
+    # gp: global pointer
+    'model_type': 'bp',
     # 模型保存的文件夹
     'checkpoints_dir': 'checkpoints',
     # 类别列表
     'classes': ['company', 'position', 'detail'],
     # decision_threshold
     'decision_threshold': 0.5,
+    # 是否使用苏神的多标签分类的损失函数，默认使用BCELoss
+    'use_multilabel_categorical_cross_entropy': True,
     # 句子最大长度
     'max_sequence_length': 200,
     # epoch
@@ -47,4 +52,3 @@ configure = {
     # 训练阶段的patient
     'patient': 5,
 }
-

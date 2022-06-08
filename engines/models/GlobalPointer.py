@@ -5,20 +5,16 @@ from transformers import BertModel
 
 
 class EffiGlobalPointer(nn.Module):
-    def __init__(self, encoder, ent_type_size, inner_dim, rope=True):
-        # encoder: Bert as encoder
-        # inner_dim: 64
-        # ent_type_size: ent_cls_num
+    def __init__(self, num_labels, device, rope=True):
         super(EffiGlobalPointer, self).__init__()
         self.encoder = BertModel.from_pretrained('bert-base-chinese')
-        self.ent_type_size = ent_type_size
-        self.inner_dim = inner_dim
-        self.hidden_size = encoder.config.hidden_size
+        self.device = device
+        self.inner_dim = 64
+        self.hidden_size = self.encoder.config.hidden_size
         self.RoPE = rope
 
         self.dense_1 = nn.Linear(self.hidden_size, self.inner_dim * 2)
-        # 原版的dense2是(inner_dim * 2, ent_type_size * 2)
-        self.dense_2 = nn.Linear(self.hidden_size, self.ent_type_size * 2)
+        self.dense_2 = nn.Linear(self.hidden_size, num_labels * 2)
 
     def sinusoidal_position_embedding(self, seq_len, output_dim):
         position_ids = torch.arange(0, seq_len, dtype=torch.float).unsqueeze(-1)
@@ -26,8 +22,7 @@ class EffiGlobalPointer(nn.Module):
         indices = torch.pow(10000, -2 * indices / output_dim)
         embeddings = position_ids * indices
         embeddings = torch.stack([torch.sin(embeddings), torch.cos(embeddings)], dim=-1)
-        embeddings = torch.reshape(embeddings, (-1, seq_len, output_dim))
-        embeddings = embeddings.to(self.device)
+        embeddings = torch.reshape(embeddings, (-1, seq_len, output_dim)).to(self.device)
         return embeddings
 
     @staticmethod

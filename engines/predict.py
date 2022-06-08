@@ -13,8 +13,12 @@ class Predictor:
         self.data_manager = data_manager
         self.logger = logger
         num_labels = len(self.data_manager.categories)
-        from engines.models.BinaryPointer import BinaryPointer
-        self.model = BinaryPointer(num_labels=num_labels).to(device)
+        if configs['model_type'] == 'bp':
+            from engines.models.BinaryPointer import BinaryPointer
+            self.model = BinaryPointer(num_labels=num_labels).to(device)
+        else:
+            from engines.models.GlobalPointer import EffiGlobalPointer
+            self.model = EffiGlobalPointer(num_labels=num_labels, device=device).to(device)
         self.model.load_state_dict(torch.load(os.path.join(configs['checkpoints_dir'], 'best_model.pkl')))
         self.model.eval()
 
