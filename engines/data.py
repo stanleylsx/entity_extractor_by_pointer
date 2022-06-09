@@ -91,6 +91,7 @@ class DataManager:
         start_mapping = {i: j[0] for i, j in enumerate(token2char_span_mapping) if j != (0, 0)}
         end_mapping = {i: j[-1] - 1 for i, j in enumerate(token2char_span_mapping) if j != (0, 0)}
         if self.configs['model_type'] == 'bp':
+            model_output = torch.sigmoid(model_output)
             decision_threshold = float(self.configs['decision_threshold'])
             start = np.where(model_output[:, :, 0] > decision_threshold)
             end = np.where(model_output[:, :, 1] > decision_threshold)
