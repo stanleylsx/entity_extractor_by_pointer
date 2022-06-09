@@ -4,6 +4,8 @@
 # @File : model.py
 # @Software: PyCharm
 from abc import ABC
+
+import torch
 from torch import nn
 from transformers import BertModel
 
@@ -22,7 +24,7 @@ class BinaryPointer(nn.Module, ABC):
         bert_hidden_states = self.bert_model(input_ids, attention_mask=attention_mask)[0]
         layer_hidden = self.layer_norm(bert_hidden_states)
         fc_results = self.fc(layer_hidden)
-        output = self.sigmoid(fc_results)
-        batch_size = output.size(0)
-        transfer_output = output.view(batch_size, -1, self.num_labels, 2)
-        return transfer_output
+        batch_size = fc_results.size(0)
+        logits = fc_results.view(batch_size, -1, self.num_labels, 2)
+        probs = torch.sigmoid(logits)
+        return logits, probs
