@@ -38,7 +38,7 @@ configure = {
     # 是否使用苏神的多标签分类的损失函数，默认使用BCELoss
     'use_multilabel_categorical_cross_entropy': True,
     # 句子最大长度
-    'max_sequence_length': 100,
+    'max_sequence_length': 200,
     # epoch
     'epoch': 50,
     # batch_size
