@@ -81,4 +81,5 @@ class EffiGlobalPointer(nn.Module):
         # logits[:, None] 增加一个维度
         logits = logits[:, None] + dense_out[:, ::2, None] + dense_out[:, 1::2, :, None]
         logits = self.add_mask_tril(logits, mask=attention_mask)
-        return logits
+        probs = torch.sigmoid(logits)
+        return logits, probs
