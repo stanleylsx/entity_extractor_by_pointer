@@ -20,16 +20,17 @@ class Train:
         self.logger = logger
         self.data_manager = data_manager
         self.batch_size = self.configs['batch_size']
+        self.num_labels = len(configs['classes'])
 
         learning_rate = configs['learning_rate']
-        num_labels = len(configs['classes'])
 
         if configs['model_type'] == 'bp':
             from engines.models.BinaryPointer import BinaryPointer
-            self.model = BinaryPointer(num_labels=num_labels).to(device)
+            self.model = BinaryPointer(num_labels=self.num_labels).to(device)
+
         else:
             from engines.models.GlobalPointer import EffiGlobalPointer
-            self.model = EffiGlobalPointer(num_labels=num_labels, device=device).to(device)
+            self.model = EffiGlobalPointer(num_labels=self.num_labels, device=device).to(device)
 
         params = list(self.model.parameters())
         self.optimizer = AdamW(params, lr=learning_rate)
@@ -38,7 +39,7 @@ class Train:
             from engines.utils.losses import MultilabelCategoricalCrossEntropy
             self.loss_function = MultilabelCategoricalCrossEntropy()
         else:
-            self.loss_function = torch.nn.BCELoss(reduction='none')
+            self.loss_function = torch.nn.BCEWithLogitsLoss(reduction='none')
 
     def train(self):
         train_file = self.configs['train_file']
@@ -74,20 +75,29 @@ class Train:
                 attention_mask = attention_mask.to(self.device)
                 token_type_ids = token_type_ids.to(self.device)
                 label_vectors = label_vectors.to(self.device)
-                model_output = self.model(token_ids, attention_mask, token_type_ids).to(self.device)
+                self.optimizer.zero_grad()
+                logits, _ = self.model(token_ids, attention_mask, token_type_ids)
 
                 if self.configs['use_multilabel_categorical_cross_entropy']:
-                    model_output = model_output.reshape(batch_size * self.data_manager.num_labels * 2, -1)
-                    label_vectors = label_vectors.reshape(batch_size * self.data_manager.num_labels * 2, -1)
+                    if self.configs['model_type'] == 'bp':
+                        num_labels = self.num_labels * 2
+                    else:
+                        num_labels = self.num_labels
+                    model_output = logits.reshape(batch_size * num_labels, -1)
+                    label_vectors = label_vectors.reshape(batch_size * num_labels, -1)
                     loss = self.loss_function(model_output, label_vectors)
                 else:
-                    loss = self.loss_function(model_output, label_vectors.float())
-                    loss = torch.sum(torch.mean(loss, 3), 2)
-                    loss = torch.sum(loss * attention_mask) / torch.sum(attention_mask)
+                    if self.configs['model_type'] == 'bp':
+                        loss = self.loss_function(logits, label_vectors)
+                        loss = torch.sum(torch.mean(loss, 3), 2)
+                        loss = torch.sum(loss * attention_mask) / torch.sum(attention_mask)
+                    else:
+                        model_output = logits.reshape(batch_size * self.num_labels, -1)
+                        label_vectors = label_vectors.reshape(batch_size * self.num_labels, -1)
+                        loss = self.loss_function(model_output, label_vectors).mean()
 
-                loss_sum += loss.item()
-                self.optimizer.zero_grad()
                 loss.backward()
+                loss_sum += loss.item()
                 self.optimizer.step()
 
                 if step % self.configs['print_per_batch'] == 0 and step != 0:
@@ -137,9 +147,10 @@ class Train:
                 token_ids = token_ids.to(self.device)
                 segment_ids = segment_ids.to(self.device)
                 attention_mask = attention_mask.to(self.device)
-                model_outputs = self.model(token_ids, attention_mask, segment_ids).detach().to('cpu')
-                for text, model_output, entity_result in zip(texts, model_outputs, entity_results):
-                    p_results = self.data_manager.extract_entities(text, model_output)
+                logits, _ = self.model(token_ids, attention_mask, segment_ids)
+                logits = logits.to('cpu')
+                for text, logit, entity_result in zip(texts, logits, entity_results):
+                    p_results = self.data_manager.extract_entities(text, logit)
                     for class_id, entity_set in entity_result.items():
                         p_entity_set = p_results.get(class_id)
                         if p_entity_set is None:
