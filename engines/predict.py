@@ -5,6 +5,7 @@
 # @Software: PyCharm
 import torch
 import os
+import time
 
 
 class Predictor:
@@ -26,14 +27,16 @@ class Predictor:
         """
         预测接口
         """
+        start_time = time.time()
         encode_results = self.data_manager.tokenizer(sentence, padding='max_length')
         input_ids = encode_results.get('input_ids')
         token_ids = torch.unsqueeze(torch.LongTensor(input_ids), 0).to(self.device)
         attention_mask = torch.unsqueeze(torch.LongTensor(encode_results.get('attention_mask')), 0).to(self.device)
         segment_ids = torch.unsqueeze(torch.LongTensor(encode_results.get('token_type_ids')), 0).to(self.device)
-        model_outputs = self.model(token_ids, attention_mask, segment_ids).detach().to('cpu')
-        model_output = torch.squeeze(model_outputs)
-        results = self.data_manager.extract_entities(sentence, model_output)
+        logits, _ = self.model(token_ids, attention_mask, segment_ids)
+        logit = torch.squeeze(logits.to('cpu'))
+        results = self.data_manager.extract_entities(sentence, logit)
+        self.logger.info('predict time consumption: %.3f(ms)' % ((time.time() - start_time) * 1000))
         results_dict = {}
         for class_id, result_set in results.items():
             results_dict[self.data_manager.reverse_categories[class_id]] = list(result_set)
