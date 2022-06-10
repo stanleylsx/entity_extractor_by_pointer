@@ -63,3 +63,9 @@ if __name__ == '__main__':
                 break
             result = predictor.predict_one(sentence)
             print(result)
+    elif mode == 'convert2tf':
+        logger.info(json.dumps(configure, indent=2, ensure_ascii=False))
+        logger.info('mode: convert2tf')
+        from engines.predict import Predictor
+        predictor = Predictor(configure, data_manager, device, logger)
+        predictor.convert_torch_to_tf()
