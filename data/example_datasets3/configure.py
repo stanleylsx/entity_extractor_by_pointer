@@ -22,7 +22,7 @@ configure = {
     # 验证数据集
     'dev_file': 'data/example_datasets3/dev_data.json',
     # 没有验证集时，从训练集抽取验证集比例
-    # 'validation_rate': 0.15,
+    'validation_rate': 0.15,
     # 测试数据集
     'test_file': '',
     # 使用的模型
@@ -30,13 +30,29 @@ configure = {
     # gp: global pointer
     'model_type': 'bp',
     # 模型保存的文件夹
-    'checkpoints_dir': 'checkpoints',
+    'checkpoints_dir': 'checkpoints/example_datasets3',
+    # 模型名字
+    'model_name': 'best_model.pkl',
     # 类别列表
     'classes': ['pro', 'dis', 'sym', 'ite', 'bod', 'dru', 'mic', 'equ', 'dep'],
     # decision_threshold,binary pointer时需要指定
     'decision_threshold': 0.5,
     # 是否使用苏神的多标签分类的损失函数，默认使用BCELoss
     'use_multilabel_categorical_cross_entropy': True,
+    # 使用对抗学习
+    'use_gan': False,
+    # 目前支持FGM和PGD两种方法
+    # fgm:Fast Gradient Method
+    # pgd:Projected Gradient Descent
+    'gan_method': 'pgd',
+    # 对抗次数
+    'attack_round': 3,
+    # 是否进行warmup
+    'warmup': False,
+    # warmup方法，可选：linear、cosine
+    'scheduler_type': 'linear',
+    # warmup步数，-1自动推断为总步数的0.1
+    'num_warmup_steps': -1,
     # 句子最大长度
     'max_sequence_length': 200,
     # epoch
@@ -49,6 +65,8 @@ configure = {
     'print_per_batch': 100,
     # learning_rate
     'learning_rate': 5e-5,
+    # 优化器选择
+    'optimizer': 'AdamW',
     # 训练是否提前结束微调
     'is_early_stop': True,
     # 训练阶段的patient
