@@ -21,6 +21,9 @@ class Train:
         self.data_manager = data_manager
         self.batch_size = self.configs['batch_size']
         self.num_labels = len(configs['classes'])
+        self.checkpoints_dir = configs['checkpoints_dir']
+        self.model_name = configs['model_name']
+        self.epoch = configs['epoch']
 
         learning_rate = configs['learning_rate']
 
@@ -32,8 +35,30 @@ class Train:
             from engines.models.GlobalPointer import EffiGlobalPointer
             self.model = EffiGlobalPointer(num_labels=self.num_labels, device=device).to(device)
 
+        if configs['use_gan']:
+            if configs['gan_method'] == 'fgm':
+                from engines.utils.gan_utils import FGM
+                self.gan = FGM(self.model)
+            else:
+                from engines.utils.gan_utils import PGD
+                self.gan = PGD(self.model)
+
         params = list(self.model.parameters())
-        self.optimizer = AdamW(params, lr=learning_rate)
+        optimizer_type = configs['optimizer']
+        if optimizer_type == 'Adagrad':
+            self.optimizer = torch.optim.Adagrad(params, lr=learning_rate)
+        elif optimizer_type == 'Adadelta':
+            self.optimizer = torch.optim.Adadelta(params, lr=learning_rate)
+        elif optimizer_type == 'RMSprop':
+            self.optimizer = torch.optim.RMSprop(params, lr=learning_rate)
+        elif optimizer_type == 'SGD':
+            self.optimizer = torch.optim.SGD(params, lr=learning_rate)
+        elif optimizer_type == 'Adam':
+            self.optimizer = torch.optim.Adam(params, lr=learning_rate)
+        elif optimizer_type == 'AdamW':
+            self.optimizer = torch.optim.AdamW(params, lr=learning_rate)
+        else:
+            raise Exception('optimizer_type does not exist')
 
         if configs['use_multilabel_categorical_cross_entropy']:
             from engines.utils.losses import MultilabelCategoricalCrossEntropy
@@ -41,11 +66,48 @@ class Train:
         else:
             self.loss_function = torch.nn.BCEWithLogitsLoss(reduction='none')
 
+        if os.path.exists(os.path.join(self.checkpoints_dir, self.model_name)):
+            logger.info('Resuming from checkpoint...')
+            self.model.load_state_dict(torch.load(os.path.join(self.checkpoints_dir, self.model_name)))
+            optimizer_checkpoint = torch.load(os.path.join(self.checkpoints_dir, self.model_name + '.optimizer'))
+            self.optimizer.load_state_dict(optimizer_checkpoint['optimizer'])
+        else:
+            logger.info('Initializing from scratch.')
+
+    def calculate_loss(self, logits, labels, attention_mask):
+        batch_size = logits.size(0)
+        if self.configs['use_multilabel_categorical_cross_entropy']:
+            if self.configs['model_type'] == 'bp':
+                num_labels = self.num_labels * 2
+            else:
+                num_labels = self.num_labels
+            model_output = logits.reshape(batch_size * num_labels, -1)
+            label_vectors = labels.reshape(batch_size * num_labels, -1)
+            loss = self.loss_function(model_output, label_vectors)
+        else:
+            if self.configs['model_type'] == 'bp':
+                loss = self.loss_function(logits, labels)
+                loss = torch.sum(torch.mean(loss, 3), 2)
+                loss = torch.sum(loss * attention_mask) / torch.sum(attention_mask)
+            else:
+                model_output = logits.reshape(batch_size * self.num_labels, -1)
+                label_vectors = labels.reshape(batch_size * self.num_labels, -1)
+                loss = self.loss_function(model_output, label_vectors).mean()
+        return loss
+
     def train(self):
         train_file = self.configs['train_file']
         dev_file = self.configs['dev_file']
         train_data = json.load(open(train_file, encoding='utf-8'))
-        dev_data = json.load(open(dev_file, encoding='utf-8'))
+
+        if dev_file == '':
+            self.logger.info('generate validation dataset...')
+            validation_rate = self.configs['validation_rate']
+            ratio = 1 - validation_rate
+            train_data, dev_data = train_data[:int(ratio * len(train_data))], train_data[int(ratio * len(train_data)):]
+        else:
+            dev_data = json.load(open(dev_file, encoding='utf-8'))
+
         self.logger.info('loading train data...')
         train_loader = DataLoader(
             dataset=train_data,
@@ -58,53 +120,82 @@ class Train:
             batch_size=self.batch_size,
             collate_fn=self.data_manager.prepare_data,
         )
+
         best_f1 = 0
         best_epoch = 0
         unprocessed = 0
-        very_start_time = time.time()
+        step_total = self.epoch * len(train_loader)
+        global_step = 0
+        scheduler = None
 
-        for i in range(self.configs['epoch']):
-            self.logger.info('\nepoch:{}/{}'.format(i + 1, self.configs['epoch']))
+        if self.configs['warmup']:
+            scheduler_type = self.configs['scheduler_type']
+            if self.configs['num_warmup_steps'] == -1:
+                num_warmup_steps = step_total * 0.1
+            else:
+                num_warmup_steps = self.configs['num_warmup_steps']
+
+            if scheduler_type == 'linear':
+                from transformers.optimization import get_linear_schedule_with_warmup
+                scheduler = get_linear_schedule_with_warmup(optimizer=self.optimizer,
+                                                            num_warmup_steps=num_warmup_steps,
+                                                            num_training_steps=step_total)
+            elif scheduler_type == 'cosine':
+                from transformers.optimization import get_cosine_schedule_with_warmup
+                scheduler = get_cosine_schedule_with_warmup(optimizer=self.optimizer,
+                                                            num_warmup_steps=num_warmup_steps,
+                                                            num_training_steps=step_total)
+            else:
+                raise Exception('scheduler_type does not exist')
+
+        very_start_time = time.time()
+        for i in range(self.epoch):
+            self.logger.info('\nepoch:{}/{}'.format(i + 1, self.epoch))
             self.model.train()
             start_time = time.time()
             step, loss, loss_sum = 0, 0.0, 0.0
             for batch in tqdm(train_loader):
                 _, _, token_ids, token_type_ids, attention_mask, label_vectors = batch
-                batch_size = token_ids.size(0)
                 token_ids = token_ids.to(self.device)
                 attention_mask = attention_mask.to(self.device)
                 token_type_ids = token_type_ids.to(self.device)
                 label_vectors = label_vectors.to(self.device)
                 self.optimizer.zero_grad()
                 logits, _ = self.model(token_ids, attention_mask, token_type_ids)
-
-                if self.configs['use_multilabel_categorical_cross_entropy']:
-                    if self.configs['model_type'] == 'bp':
-                        num_labels = self.num_labels * 2
-                    else:
-                        num_labels = self.num_labels
-                    model_output = logits.reshape(batch_size * num_labels, -1)
-                    label_vectors = label_vectors.reshape(batch_size * num_labels, -1)
-                    loss = self.loss_function(model_output, label_vectors)
-                else:
-                    if self.configs['model_type'] == 'bp':
-                        loss = self.loss_function(logits, label_vectors)
-                        loss = torch.sum(torch.mean(loss, 3), 2)
-                        loss = torch.sum(loss * attention_mask) / torch.sum(attention_mask)
-                    else:
-                        model_output = logits.reshape(batch_size * self.num_labels, -1)
-                        label_vectors = label_vectors.reshape(batch_size * self.num_labels, -1)
-                        loss = self.loss_function(model_output, label_vectors).mean()
-
+                loss = self.calculate_loss(logits, label_vectors, attention_mask)
                 loss.backward()
                 loss_sum += loss.item()
+                if self.configs['use_gan']:
+                    k = self.configs['attack_round']
+                    if self.configs['gan_method'] == 'fgm':
+                        self.gan.attack()
+                        logits, _ = self.model(token_ids, attention_mask, token_type_ids)
+                        loss = self.calculate_loss(logits, label_vectors, attention_mask)
+                        loss.backward()
+                        self.gan.restore()  # 恢复embedding参数
+                    else:
+                        self.gan.backup_grad()
+                        for t in range(k):
+                            self.gan.attack(is_first_attack=(t == 0))
+                            if t != k - 1:
+                                self.model.zero_grad()
+                            else:
+                                self.gan.restore_grad()
+                            logits, _ = self.model(token_ids, attention_mask, token_type_ids)
+                            loss = self.calculate_loss(logits, label_vectors, attention_mask)
+                            loss.backward()
+                        self.gan.restore()
                 self.optimizer.step()
+
+                if self.configs['warmup']:
+                    scheduler.step()
 
                 if step % self.configs['print_per_batch'] == 0 and step != 0:
                     avg_loss = loss_sum / (step + 1)
                     self.logger.info('training_loss:%f' % avg_loss)
 
                 step = step + 1
+                global_step = global_step + step
 
             f1 = self.validate(dev_loader)
             time_span = (time.time() - start_time) / 60
@@ -113,7 +204,9 @@ class Train:
                 unprocessed = 0
                 best_f1 = f1
                 best_epoch = i + 1
-                torch.save(self.model.state_dict(), os.path.join(self.configs['checkpoints_dir'], 'best_model.pkl'))
+                optimizer_checkpoint = {'optimizer': self.optimizer.state_dict()}
+                torch.save(optimizer_checkpoint, os.path.join(self.checkpoints_dir, self.model_name + '.optimizer'))
+                torch.save(self.model.state_dict(), os.path.join(self.checkpoints_dir, self.model_name))
                 self.logger.info('saved model successful...')
             else:
                 unprocessed += 1
