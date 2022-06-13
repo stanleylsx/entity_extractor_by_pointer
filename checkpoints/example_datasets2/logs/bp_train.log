@@ -1,0 +1,295 @@
+2022-06-13 10:05:23
+device: cuda
+{
+  "train_file": "data/example_datasets2/train_data.json",
+  "dev_file": "data/example_datasets2/dev_data.json",
+  "validation_rate": 0.15,
+  "test_file": "",
+  "model_type": "bp",
+  "checkpoints_dir": "checkpoints/example_datasets2/bp",
+  "model_name": "best_model.pkl",
+  "classes": [
+    "person",
+    "location",
+    "organization"
+  ],
+  "decision_threshold": 0.5,
+  "use_multilabel_categorical_cross_entropy": false,
+  "use_gan": false,
+  "gan_method": "pgd",
+  "attack_round": 3,
+  "warmup": false,
+  "scheduler_type": "linear",
+  "num_warmup_steps": -1,
+  "max_sequence_length": 200,
+  "epoch": 50,
+  "batch_size": 16,
+  "dropout_rate": 0.5,
+  "print_per_batch": 100,
+  "learning_rate": 5e-05,
+  "optimizer": "AdamW",
+  "is_early_stop": true,
+  "patient": 5
+}
+mode: train
+Initializing from scratch.
+loading train data...
+
+epoch:1/50
+training_loss:0.180298
+training_loss:0.109365
+training_loss:0.081573
+training_loss:0.068070
+training_loss:0.058911
+training_loss:0.053198
+training_loss:0.048236
+training_loss:0.045017
+training_loss:0.041939
+training_loss:0.039627
+training_loss:0.037520
+training_loss:0.035612
+training_loss:0.034257
+training_loss:0.032910
+start evaluate engines...
+class_name: person, precision: 0.9849, recall: 0.9641, f1: 0.9744
+class_name: location, precision: 0.9365, recall: 0.8976, f1: 0.9167
+class_name: organization, precision: 0.8953, recall: 0.8422, f1: 0.8679
+time consumption:2.67(min)
+saved model successful...
+aver_loss: 0.0323, f1: 0.9197, best_f1: 0.9197, best_epoch: 1 
+
+
+epoch:2/50
+training_loss:0.011925
+training_loss:0.012469
+training_loss:0.012061
+training_loss:0.011697
+training_loss:0.011302
+training_loss:0.010990
+training_loss:0.010799
+training_loss:0.010647
+training_loss:0.010387
+training_loss:0.010213
+training_loss:0.009964
+training_loss:0.009960
+training_loss:0.009817
+training_loss:0.009822
+start evaluate engines...
+class_name: person, precision: 0.9878, recall: 0.9693, f1: 0.9785
+class_name: location, precision: 0.9529, recall: 0.9113, f1: 0.9317
+class_name: organization, precision: 0.8926, recall: 0.9160, f1: 0.9042
+time consumption:2.79(min)
+saved model successful...
+aver_loss: 0.0098, f1: 0.9381, best_f1: 0.9381, best_epoch: 2 
+
+
+epoch:3/50
+training_loss:0.005892
+training_loss:0.006113
+training_loss:0.006015
+training_loss:0.006323
+training_loss:0.006623
+training_loss:0.006552
+training_loss:0.006515
+training_loss:0.006569
+training_loss:0.006812
+training_loss:0.006997
+training_loss:0.007174
+training_loss:0.007241
+training_loss:0.007187
+training_loss:0.007153
+start evaluate engines...
+class_name: person, precision: 0.9894, recall: 0.9522, f1: 0.9704
+class_name: location, precision: 0.9328, recall: 0.9306, f1: 0.9317
+class_name: organization, precision: 0.9201, recall: 0.9000, f1: 0.9099
+time consumption:2.69(min)
+aver_loss: 0.0071, f1: 0.9374, best_f1: 0.9381, best_epoch: 2 
+
+
+epoch:4/50
+training_loss:0.005072
+training_loss:0.005447
+training_loss:0.006823
+training_loss:0.006716
+training_loss:0.008397
+training_loss:0.008903
+training_loss:0.019375
+training_loss:0.018036
+training_loss:0.016754
+training_loss:0.015860
+training_loss:0.015431
+training_loss:0.014795
+training_loss:0.014189
+training_loss:0.013687
+start evaluate engines...
+class_name: person, precision: 0.9871, recall: 0.9619, f1: 0.9743
+class_name: location, precision: 0.9554, recall: 0.8832, f1: 0.9179
+class_name: organization, precision: 0.8849, recall: 0.9073, f1: 0.8960
+time consumption:2.69(min)
+aver_loss: 0.0134, f1: 0.9294, best_f1: 0.9381, best_epoch: 2 
+
+
+epoch:5/50
+training_loss:0.004180
+training_loss:0.005092
+training_loss:0.005116
+training_loss:0.005069
+training_loss:0.005078
+training_loss:0.004924
+training_loss:0.004754
+training_loss:0.004690
+training_loss:0.004681
+training_loss:0.004771
+training_loss:0.004734
+training_loss:0.004694
+training_loss:0.004753
+training_loss:0.004638
+start evaluate engines...
+class_name: person, precision: 0.9850, recall: 0.9704, f1: 0.9776
+class_name: location, precision: 0.9675, recall: 0.8897, f1: 0.9270
+class_name: organization, precision: 0.9256, recall: 0.9180, f1: 0.9218
+time consumption:2.69(min)
+saved model successful...
+aver_loss: 0.0046, f1: 0.9421, best_f1: 0.9421, best_epoch: 5 
+
+
+epoch:6/50
+training_loss:0.003255
+training_loss:0.003312
+training_loss:0.003636
+training_loss:0.003552
+training_loss:0.003530
+training_loss:0.003654
+training_loss:0.004016
+training_loss:0.003778
+training_loss:0.003723
+training_loss:0.003733
+training_loss:0.003729
+training_loss:0.003689
+training_loss:0.003666
+training_loss:0.003880
+start evaluate engines...
+class_name: person, precision: 0.9721, recall: 0.9710, f1: 0.9715
+class_name: location, precision: 0.9371, recall: 0.8955, f1: 0.9158
+class_name: organization, precision: 0.9113, recall: 0.8932, f1: 0.9022
+time consumption:2.69(min)
+aver_loss: 0.0040, f1: 0.9298, best_f1: 0.9421, best_epoch: 5 
+
+
+epoch:7/50
+training_loss:0.003632
+training_loss:0.003232
+training_loss:0.003617
+training_loss:0.003621
+training_loss:0.004136
+training_loss:0.004009
+training_loss:0.004003
+training_loss:0.003939
+training_loss:0.004126
+training_loss:0.004233
+training_loss:0.004389
+training_loss:0.004442
+training_loss:0.004485
+training_loss:0.004627
+start evaluate engines...
+class_name: person, precision: 0.9826, recall: 0.9619, f1: 0.9721
+class_name: location, precision: 0.9570, recall: 0.8790, f1: 0.9164
+class_name: organization, precision: 0.9341, recall: 0.9078, f1: 0.9207
+time consumption:2.69(min)
+aver_loss: 0.0046, f1: 0.9364, best_f1: 0.9421, best_epoch: 5 
+
+
+epoch:8/50
+training_loss:0.003165
+training_loss:0.003434
+training_loss:0.003556
+training_loss:0.003301
+training_loss:0.003476
+training_loss:0.003836
+training_loss:0.003904
+training_loss:0.004070
+training_loss:0.004181
+training_loss:0.004281
+training_loss:0.004359
+training_loss:0.004450
+training_loss:0.004559
+training_loss:0.004599
+start evaluate engines...
+class_name: person, precision: 0.9673, recall: 0.9755, f1: 0.9714
+class_name: location, precision: 0.9406, recall: 0.8928, f1: 0.9161
+class_name: organization, precision: 0.9375, recall: 0.8587, f1: 0.8964
+time consumption:2.69(min)
+aver_loss: 0.0046, f1: 0.9279, best_f1: 0.9421, best_epoch: 5 
+
+
+epoch:9/50
+training_loss:0.003545
+training_loss:0.003379
+training_loss:0.003456
+training_loss:0.004264
+training_loss:0.004152
+training_loss:0.004283
+training_loss:0.004163
+training_loss:0.004179
+training_loss:0.004162
+training_loss:0.004140
+training_loss:0.004107
+training_loss:0.004180
+training_loss:0.004134
+training_loss:0.004071
+start evaluate engines...
+class_name: person, precision: 0.9786, recall: 0.9630, f1: 0.9707
+class_name: location, precision: 0.9597, recall: 0.8828, f1: 0.9196
+class_name: organization, precision: 0.9215, recall: 0.8888, f1: 0.9049
+time consumption:2.69(min)
+aver_loss: 0.0040, f1: 0.9317, best_f1: 0.9421, best_epoch: 5 
+
+
+epoch:10/50
+training_loss:0.002381
+training_loss:0.003556
+training_loss:0.003674
+training_loss:0.003389
+training_loss:0.003244
+training_loss:0.003145
+training_loss:0.003366
+training_loss:0.003722
+training_loss:0.003646
+training_loss:0.003771
+training_loss:0.004116
+training_loss:0.004125
+training_loss:0.004094
+training_loss:0.004141
+start evaluate engines...
+class_name: person, precision: 0.9830, recall: 0.9550, f1: 0.9688
+class_name: location, precision: 0.9520, recall: 0.8801, f1: 0.9146
+class_name: organization, precision: 0.9366, recall: 0.8612, f1: 0.8973
+time consumption:2.69(min)
+aver_loss: 0.0042, f1: 0.9269, best_f1: 0.9421, best_epoch: 5 
+
+
+epoch:11/50
+training_loss:0.004058
+training_loss:0.004166
+training_loss:0.004310
+training_loss:0.004117
+training_loss:0.004517
+training_loss:0.004318
+training_loss:0.004417
+training_loss:0.004478
+training_loss:0.004334
+training_loss:0.004287
+training_loss:0.004596
+training_loss:0.004505
+training_loss:0.004535
+training_loss:0.004460
+start evaluate engines...
+class_name: person, precision: 0.9796, recall: 0.9556, f1: 0.9674
+class_name: location, precision: 0.9595, recall: 0.8790, f1: 0.9175
+class_name: organization, precision: 0.9373, recall: 0.8782, f1: 0.9068
+time consumption:2.69(min)
+aver_loss: 0.0045, f1: 0.9306, best_f1: 0.9421, best_epoch: 5 
+
+early stopped, no progress obtained within 5 epochs
+overall best f1 is 0.942120811660441 at 5 epoch
+total training time consumption: 30.010(min)
