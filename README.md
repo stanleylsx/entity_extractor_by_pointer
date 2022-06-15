@@ -1,6 +1,6 @@
 # Entity Extractor By Pointer
 
-使用指针范式进行NER识别的两种经典方法，分别是BinaryPointer(SpanBert)和苏神的GlobalPointer，项目基于torch编写，提供可配置文件，按照对应的数据格式整理好数据，通过配置后直接运行main.py即可。  
+使用指针范式进行NER识别的两种经典方法，分别是BinaryPointer(SpanBert)和苏神的GlobalPointer，项目基于torch编写，提供可配置文件，项目已经提供了三种不同领域的数据，格式都一样，使用自己数据时请按照对应的数据格式整理好数据，并且按照配置要求填写参数，配置后直接运行main.py即可。  
 关于CRF范式的NER抽取实现请参考仓库里的另外一个项目[基于Tensorflow2.3的NER任务项目](https://github.com/StanleyLsx/entity_extractor_by_ner)，工作较忙，不打算把两种范式统一成一个项目了。  
 爱打比赛朋友可以继续在里面加入想要的tricks。
 
