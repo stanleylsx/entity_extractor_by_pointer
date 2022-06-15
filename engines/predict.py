@@ -43,6 +43,9 @@ class Predictor:
             results_dict[self.data_manager.reverse_categories[class_id]] = list(result_set)
         return results_dict
 
+    def predict_test(self):
+        pass
+
     def convert_torch_to_tf(self):
         import onnx
         from onnx_tf.backend import prepare
