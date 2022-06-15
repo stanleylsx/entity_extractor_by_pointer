@@ -30,7 +30,6 @@ class Train:
         if configs['model_type'] == 'bp':
             from engines.models.BinaryPointer import BinaryPointer
             self.model = BinaryPointer(num_labels=self.num_labels).to(device)
-
         else:
             from engines.models.GlobalPointer import EffiGlobalPointer
             self.model = EffiGlobalPointer(num_labels=self.num_labels, device=device).to(device)
