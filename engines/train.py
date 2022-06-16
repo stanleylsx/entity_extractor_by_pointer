@@ -3,8 +3,6 @@
 # @Email : gzlishouxian@gmail.com
 # @File : train.py
 # @Software: PyCharm
-from engines.models.BinaryPointer import BinaryPointer
-from transformers import AdamW
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 import json
