@@ -39,6 +39,8 @@ configure = {
     'decision_threshold': 0.5,
     # 是否使用苏神的多标签分类的损失函数，默认使用BCELoss
     'use_multilabel_categorical_cross_entropy': True,
+    # model test measuring metrics
+    'measuring_metrics': ['precision', 'recall', 'f1', 'accuracy'],
     # 使用对抗学习
     'use_gan': False,
     # 目前支持FGM和PGD两种方法

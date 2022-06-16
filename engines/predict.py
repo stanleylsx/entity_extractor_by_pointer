@@ -14,6 +14,7 @@ class Predictor:
         self.data_manager = data_manager
         self.logger = logger
         self.checkpoints_dir = configs['checkpoints_dir']
+        self.metrics = configs['measuring_metrics']
         num_labels = len(self.data_manager.categories)
         if configs['model_type'] == 'bp':
             from engines.models.BinaryPointer import BinaryPointer
@@ -44,6 +45,21 @@ class Predictor:
         return results_dict
 
     def predict_test(self):
+        loss_values = []
+        test_results = {}
+        test_labels_results = {}
+
+        for label in self.data_manager.suffix:
+            test_labels_results.setdefault(label, {})
+        for measure in self.metrics:
+            test_results[measure] = 0
+        for label, content in test_labels_results.items():
+            for measure in self.metrics:
+                if measure != 'accuracy':
+                    test_labels_results[label][measure] = 0
+
+        test_dataset = self.data_manager.get_test_dataset()
+
         pass
 
     def convert_torch_to_tf(self):

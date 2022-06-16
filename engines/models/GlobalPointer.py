@@ -22,7 +22,8 @@ class EffiGlobalPointer(nn.Module):
         indices = torch.pow(10000, -2 * indices / output_dim)
         embeddings = position_ids * indices
         embeddings = torch.stack([torch.sin(embeddings), torch.cos(embeddings)], dim=-1)
-        embeddings = torch.reshape(embeddings, (-1, seq_len, output_dim)).to(self.device)
+        # embeddings = torch.reshape(embeddings, (-1, seq_len, output_dim)).to(self.device)
+        embeddings = torch.reshape(embeddings, (-1, seq_len, output_dim))
         return embeddings
 
     @staticmethod
