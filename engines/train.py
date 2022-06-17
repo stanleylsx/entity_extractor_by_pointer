@@ -3,8 +3,6 @@
 # @Email : gzlishouxian@gmail.com
 # @File : train.py
 # @Software: PyCharm
-from engines.models.BinaryPointer import BinaryPointer
-from transformers import AdamW
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 import json
@@ -30,7 +28,6 @@ class Train:
         if configs['model_type'].lower() == 'bp':
             from engines.models.BinaryPointer import BinaryPointer
             self.model = BinaryPointer(num_labels=self.num_labels).to(device)
-
         elif configs['model_type'].lower() == 'gp':
             from engines.models.GlobalPointer import EffiGlobalPointer
             self.model = EffiGlobalPointer(num_labels=self.num_labels, device=device).to(device)
