@@ -68,7 +68,7 @@ class Predictor:
 
         with torch.no_grad():
             self.model.eval()
-            self.logger.info('start evaluate engines...')
+            self.logger.info('start test engines...')
             for batch in tqdm(test_loader):
                 texts, entity_results, token_ids, segment_ids, attention_mask, _ = batch
                 token_ids = token_ids.to(self.device)
