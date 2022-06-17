@@ -2,6 +2,8 @@
 import torch
 import torch.nn as nn
 from transformers import BertModel
+from engines.utils.onnx_fun import ONNXAdds
+from configure import mode
 
 
 class EffiGlobalPointer(nn.Module):
@@ -12,6 +14,9 @@ class EffiGlobalPointer(nn.Module):
         self.inner_dim = 64
         self.hidden_size = self.encoder.config.hidden_size
         self.RoPE = rope
+        if mode == 'convert2tf':
+            self.onnx_adds = ONNXAdds()
+            self.device = 'cpu'
 
         self.dense_1 = nn.Linear(self.hidden_size, self.inner_dim * 2)
         self.dense_2 = nn.Linear(self.hidden_size, num_labels * 2)
@@ -47,7 +52,11 @@ class EffiGlobalPointer(nn.Module):
         logits = self.sequence_masking(logits, mask, '-inf', logits.ndim - 2)
         logits = self.sequence_masking(logits, mask, '-inf', logits.ndim - 1)
         # 排除下三角
-        mask = torch.tril(torch.ones_like(logits), diagonal=-1)
+        if mode == 'convert2tf':
+            # onnx中支持tril的实现方法
+            mask = self.onnx_adds.tril_onnx(torch.ones_like(logits), diagonal=-1)
+        else:
+            mask = torch.tril(torch.ones_like(logits), diagonal=-1)
         logits = logits - mask * 1e12
         return logits
 

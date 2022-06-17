@@ -63,6 +63,12 @@ if __name__ == '__main__':
                 break
             result = predictor.predict_one(sentence)
             print(result)
+    elif mode == 'test':
+        from engines.predict import Predictor
+        logger.info(json.dumps(configure, indent=2, ensure_ascii=False))
+        logger.info('mode: test')
+        predictor = Predictor(configure, data_manager, device, logger)
+        predictor.predict_test()
     elif mode == 'convert2tf':
         logger.info(json.dumps(configure, indent=2, ensure_ascii=False))
         logger.info('mode: convert2tf')
