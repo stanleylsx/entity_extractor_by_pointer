@@ -25,20 +25,26 @@ class Train:
 
         learning_rate = configs['learning_rate']
 
-        if configs['model_type'] == 'bp':
+        if configs['model_type'].lower() == 'bp':
             from engines.models.BinaryPointer import BinaryPointer
             self.model = BinaryPointer(num_labels=self.num_labels).to(device)
-        else:
+        elif configs['model_type'].lower() == 'gp':
             from engines.models.GlobalPointer import EffiGlobalPointer
             self.model = EffiGlobalPointer(num_labels=self.num_labels, device=device).to(device)
+        else:
+            raise Exception('configs["model_type"] is not supported! '
+                            'Available options are bp(binary pointer) and gp(global pointer)')
 
         if configs['use_gan']:
-            if configs['gan_method'] == 'fgm':
+            if configs['gan_method'].lower() == 'fgm':
                 from engines.utils.gan_utils import FGM
                 self.gan = FGM(self.model)
-            else:
+            elif configs['gan_method'].lower() == 'pgd':
                 from engines.utils.gan_utils import PGD
                 self.gan = PGD(self.model)
+            else:
+                raise Exception('configs["gan_method"] is not supported! '
+                                'Available options are fgm and pgd')
 
         params = list(self.model.parameters())
         optimizer_type = configs['optimizer']

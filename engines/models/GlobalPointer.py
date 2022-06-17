@@ -2,6 +2,7 @@
 import torch
 import torch.nn as nn
 from transformers import BertModel
+from engines.utils.onnx_fun import onnx_adds
 
 
 class EffiGlobalPointer(nn.Module):
@@ -22,7 +23,8 @@ class EffiGlobalPointer(nn.Module):
         indices = torch.pow(10000, -2 * indices / output_dim)
         embeddings = position_ids * indices
         embeddings = torch.stack([torch.sin(embeddings), torch.cos(embeddings)], dim=-1)
-        embeddings = torch.reshape(embeddings, (-1, seq_len, output_dim)).to(self.device)
+        # embeddings = torch.reshape(embeddings, (-1, seq_len, output_dim)).to(self.device)
+        embeddings = torch.reshape(embeddings, (-1, seq_len, output_dim))
         return embeddings
 
     @staticmethod
@@ -47,7 +49,7 @@ class EffiGlobalPointer(nn.Module):
         logits = self.sequence_masking(logits, mask, '-inf', logits.ndim - 2)
         logits = self.sequence_masking(logits, mask, '-inf', logits.ndim - 1)
         # 排除下三角
-        mask = torch.tril(torch.ones_like(logits), diagonal=-1)
+        mask = onnx_adds.tril_onnx(torch.ones_like(logits), diagonal=-1)
         logits = logits - mask * 1e12
         return logits
 
