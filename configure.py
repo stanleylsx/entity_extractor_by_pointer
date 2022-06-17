@@ -10,7 +10,7 @@
 # test:跑测试集
 # convert2tf:将torch模型保存为tf框架的pb格式文件
 # [train, interactive_predict, test, convert2tf]
-mode = 'test'
+mode = 'convert2tf'
 
 # 使用GPU设备
 use_cuda = True
@@ -20,11 +20,11 @@ configure = {
     # 训练数据集
     'train_file': 'data/dataset/train_data.json',
     # 验证数据集
-    'dev_file': 'data/dataset/dev_data.json',
+    'dev_file': '',
     # 没有验证集时，从训练集抽取验证集比例
     'validation_rate': 0.15,
     # 测试数据集
-    'test_file': '',
+    'test_file': 'data/dataset/test_data.json',
     # 使用的模型
     # bp: binary pointer
     # gp: global pointer

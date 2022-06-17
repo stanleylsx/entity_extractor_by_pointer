@@ -22,7 +22,7 @@ class Predictor:
         else:
             from engines.models.GlobalPointer import EffiGlobalPointer
             self.model = EffiGlobalPointer(num_labels=num_labels, device=device).to(device)
-        self.model.load_state_dict(torch.load(os.path.join(configs['checkpoints_dir'], 'best_model.pkl')))
+        self.model.load_state_dict(torch.load(os.path.join(configs['checkpoints_dir'], 'model.pkl')))
         self.model.eval()
 
     def predict_one(self, sentence):
@@ -69,7 +69,7 @@ class Predictor:
         dummy_input = torch.ones([1, max_sequence_length]).to('cpu').long()
         dummy_input = (dummy_input, dummy_input, dummy_input)
         onnx_path = self.checkpoints_dir + '/model.onnx'
-        torch.onnx.export(self.model.to('cpu'), dummy_input, f=onnx_path, opset_version=10,
+        torch.onnx.export(self.model.to('cpu'), dummy_input, f=onnx_path, opset_version=13,
                           input_names=['tokens', 'attentions', 'types'], output_names=['logits', 'probs'],
                           do_constant_folding=False,
                           dynamic_axes={'tokens': {0: 'batch_size'}, 'attentions': {0: 'batch_size'},
@@ -77,6 +77,5 @@ class Predictor:
                                         'probs': {0: 'batch_size'}})
         model_onnx = onnx.load(onnx_path)
         tf_rep = prepare(model_onnx)
-        pb_path = self.checkpoints_dir + '/model.pb'
-        tf_rep.export_graph(pb_path)
+        tf_rep.export_graph(self.checkpoints_dir + '/model.pb')
         self.logger.info('convert torch to tensorflow pb successful...')
