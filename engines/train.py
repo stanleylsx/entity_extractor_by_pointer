@@ -198,7 +198,7 @@ class Train:
                     self.logger.info('training_loss:%f' % avg_loss)
 
                 step = step + 1
-                global_step = global_step + step
+                global_step = global_step + 1
 
             f1 = self.validate(dev_loader)
             time_span = (time.time() - start_time) / 60
