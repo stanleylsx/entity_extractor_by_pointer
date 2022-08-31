@@ -22,60 +22,16 @@ class Train:
         self.checkpoints_dir = configs['checkpoints_dir']
         self.model_name = configs['model_name']
         self.epoch = configs['epoch']
+        self.learning_rate = configs['learning_rate']
 
-        learning_rate = configs['learning_rate']
-
-        if configs['model_type'].lower() == 'bp':
-            from engines.models.BinaryPointer import BinaryPointer
-            self.model = BinaryPointer(num_labels=self.num_labels).to(device)
-        elif configs['model_type'].lower() == 'gp':
-            from engines.models.GlobalPointer import EffiGlobalPointer
-            self.model = EffiGlobalPointer(num_labels=self.num_labels, device=device).to(device)
-        else:
-            raise Exception('configs["model_type"] is not supported! '
-                            'Available options are bp(binary pointer) and gp(global pointer)')
-
-        if configs['use_gan']:
-            if configs['gan_method'].lower() == 'fgm':
-                from engines.utils.gan_utils import FGM
-                self.gan = FGM(self.model)
-            elif configs['gan_method'].lower() == 'pgd':
-                from engines.utils.gan_utils import PGD
-                self.gan = PGD(self.model)
-            else:
-                raise Exception('configs["gan_method"] is not supported! '
-                                'Available options are fgm and pgd')
-
-        params = list(self.model.parameters())
-        optimizer_type = configs['optimizer']
-        if optimizer_type == 'Adagrad':
-            self.optimizer = torch.optim.Adagrad(params, lr=learning_rate)
-        elif optimizer_type == 'Adadelta':
-            self.optimizer = torch.optim.Adadelta(params, lr=learning_rate)
-        elif optimizer_type == 'RMSprop':
-            self.optimizer = torch.optim.RMSprop(params, lr=learning_rate)
-        elif optimizer_type == 'SGD':
-            self.optimizer = torch.optim.SGD(params, lr=learning_rate)
-        elif optimizer_type == 'Adam':
-            self.optimizer = torch.optim.Adam(params, lr=learning_rate)
-        elif optimizer_type == 'AdamW':
-            self.optimizer = torch.optim.AdamW(params, lr=learning_rate)
-        else:
-            raise Exception('optimizer_type does not exist')
+        self.optimizer = None
+        self.gan = None
 
         if configs['use_multilabel_categorical_cross_entropy']:
             from engines.utils.losses import MultilabelCategoricalCrossEntropy
             self.loss_function = MultilabelCategoricalCrossEntropy()
         else:
             self.loss_function = torch.nn.BCEWithLogitsLoss(reduction='none')
-
-        if os.path.exists(os.path.join(self.checkpoints_dir, self.model_name)):
-            logger.info('Resuming from checkpoint...')
-            self.model.load_state_dict(torch.load(os.path.join(self.checkpoints_dir, self.model_name)))
-            optimizer_checkpoint = torch.load(os.path.join(self.checkpoints_dir, self.model_name + '.optimizer'))
-            self.optimizer.load_state_dict(optimizer_checkpoint['optimizer'])
-        else:
-            logger.info('Initializing from scratch.')
 
     def calculate_loss(self, logits, labels, attention_mask):
         batch_size = logits.size(0)
@@ -98,7 +54,47 @@ class Train:
                 loss = self.loss_function(model_output, label_vectors).mean()
         return loss
 
-    def train(self):
+    def init_model(self):
+        if self.configs['model_type'].lower() == 'bp':
+            from engines.models.BinaryPointer import BinaryPointer
+            model = BinaryPointer(num_labels=self.num_labels).to(self.device)
+        elif self.configs['model_type'].lower() == 'gp':
+            from engines.models.GlobalPointer import EffiGlobalPointer
+            model = EffiGlobalPointer(num_labels=self.num_labels, device=self.device).to(self.device)
+        else:
+            raise Exception('configs["model_type"] is not supported! '
+                            'Available options are bp(binary pointer) and gp(global pointer)')
+
+        if self.configs['use_gan']:
+            if self.configs['gan_method'].lower() == 'fgm':
+                from engines.utils.gan_utils import FGM
+                self.gan = FGM(model)
+            elif self.configs['gan_method'].lower() == 'pgd':
+                from engines.utils.gan_utils import PGD
+                self.gan = PGD(model)
+            else:
+                raise Exception('configs["gan_method"] is not supported! '
+                                'Available options are fgm and pgd')
+
+        params = list(model.parameters())
+        optimizer_type = self.configs['optimizer']
+        if optimizer_type == 'Adagrad':
+            self.optimizer = torch.optim.Adagrad(params, lr=self.learning_rate)
+        elif optimizer_type == 'Adadelta':
+            self.optimizer = torch.optim.Adadelta(params, lr=self.learning_rate)
+        elif optimizer_type == 'RMSprop':
+            self.optimizer = torch.optim.RMSprop(params, lr=self.learning_rate)
+        elif optimizer_type == 'SGD':
+            self.optimizer = torch.optim.SGD(params, lr=self.learning_rate)
+        elif optimizer_type == 'Adam':
+            self.optimizer = torch.optim.Adam(params, lr=self.learning_rate)
+        elif optimizer_type == 'AdamW':
+            self.optimizer = torch.optim.AdamW(params, lr=self.learning_rate)
+        else:
+            raise Exception('optimizer_type does not exist')
+        return model
+
+    def split_data(self):
         train_file = self.configs['train_file']
         dev_file = self.configs['dev_file']
         train_data = json.load(open(train_file, encoding='utf-8'))
@@ -123,6 +119,18 @@ class Train:
             batch_size=self.batch_size,
             collate_fn=self.data_manager.prepare_data,
         )
+        return train_loader, dev_loader
+
+    def train(self):
+        model = self.init_model()
+        if os.path.exists(os.path.join(self.checkpoints_dir, self.model_name)):
+            self.logger.info('Resuming from checkpoint...')
+            model.load_state_dict(torch.load(os.path.join(self.checkpoints_dir, self.model_name)))
+            optimizer_checkpoint = torch.load(os.path.join(self.checkpoints_dir, self.model_name + '.optimizer'))
+            self.optimizer.load_state_dict(optimizer_checkpoint['optimizer'])
+        else:
+            self.logger.info('Initializing from scratch.')
+        train_loader, dev_loader = self.split_data()
 
         best_f1 = 0
         best_epoch = 0
@@ -154,7 +162,7 @@ class Train:
         very_start_time = time.time()
         for i in range(self.epoch):
             self.logger.info('\nepoch:{}/{}'.format(i + 1, self.epoch))
-            self.model.train()
+            model.train()
             start_time = time.time()
             step, loss, loss_sum = 0, 0.0, 0.0
             for batch in tqdm(train_loader):
@@ -164,7 +172,7 @@ class Train:
                 token_type_ids = token_type_ids.to(self.device)
                 label_vectors = label_vectors.to(self.device)
                 self.optimizer.zero_grad()
-                logits, _ = self.model(token_ids, attention_mask, token_type_ids)
+                logits, _ = model(token_ids, attention_mask, token_type_ids)
                 loss = self.calculate_loss(logits, label_vectors, attention_mask)
                 loss.backward()
                 loss_sum += loss.item()
@@ -172,7 +180,7 @@ class Train:
                     k = self.configs['attack_round']
                     if self.configs['gan_method'] == 'fgm':
                         self.gan.attack()
-                        logits, _ = self.model(token_ids, attention_mask, token_type_ids)
+                        logits, _ = model(token_ids, attention_mask, token_type_ids)
                         loss = self.calculate_loss(logits, label_vectors, attention_mask)
                         loss.backward()
                         self.gan.restore()  # 恢复embedding参数
@@ -181,10 +189,10 @@ class Train:
                         for t in range(k):
                             self.gan.attack(is_first_attack=(t == 0))
                             if t != k - 1:
-                                self.model.zero_grad()
+                                model.zero_grad()
                             else:
                                 self.gan.restore_grad()
-                            logits, _ = self.model(token_ids, attention_mask, token_type_ids)
+                            logits, _ = model(token_ids, attention_mask, token_type_ids)
                             loss = self.calculate_loss(logits, label_vectors, attention_mask)
                             loss.backward()
                         self.gan.restore()
@@ -198,9 +206,9 @@ class Train:
                     self.logger.info('training_loss:%f' % avg_loss)
 
                 step = step + 1
-                global_step = global_step + step
+                global_step = global_step + 1
 
-            f1 = self.validate(dev_loader)
+            f1 = self.validate(model, dev_loader)
             time_span = (time.time() - start_time) / 60
             self.logger.info('time consumption:%.2f(min)' % time_span)
             if f1 >= best_f1:
@@ -209,7 +217,7 @@ class Train:
                 best_epoch = i + 1
                 optimizer_checkpoint = {'optimizer': self.optimizer.state_dict()}
                 torch.save(optimizer_checkpoint, os.path.join(self.checkpoints_dir, self.model_name + '.optimizer'))
-                torch.save(self.model.state_dict(), os.path.join(self.checkpoints_dir, self.model_name))
+                torch.save(model.state_dict(), os.path.join(self.checkpoints_dir, self.model_name))
                 self.logger.info('saved model successful...')
             else:
                 unprocessed += 1
@@ -227,7 +235,7 @@ class Train:
         self.logger.info('overall best f1 is {} at {} epoch'.format(best_f1, best_epoch))
         self.logger.info('total training time consumption: %.3f(min)' % ((time.time() - very_start_time) / 60))
 
-    def validate(self, dev_loader):
+    def validate(self, model, dev_loader):
         counts = {}
         results_of_each_entity = {}
         for class_name, class_id in self.data_manager.categories.items():
@@ -236,14 +244,14 @@ class Train:
             results_of_each_entity[class_name] = {}
 
         with torch.no_grad():
-            self.model.eval()
+            model.eval()
             self.logger.info('start evaluate engines...')
             for batch in tqdm(dev_loader):
                 texts, entity_results, token_ids, segment_ids, attention_mask, _ = batch
                 token_ids = token_ids.to(self.device)
                 segment_ids = segment_ids.to(self.device)
                 attention_mask = attention_mask.to(self.device)
-                logits, _ = self.model(token_ids, attention_mask, segment_ids)
+                logits, _ = model(token_ids, attention_mask, segment_ids)
                 logits = logits.to('cpu')
                 for text, logit, entity_result in zip(texts, logits, entity_results):
                     p_results = self.data_manager.extract_entities(text, logit)
