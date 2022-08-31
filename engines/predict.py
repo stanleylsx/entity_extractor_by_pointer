@@ -8,7 +8,6 @@ import os
 import time
 import json
 from torch.utils.data import DataLoader
-from tqdm import tqdm
 
 
 class Predictor:
@@ -59,50 +58,9 @@ class Predictor:
             batch_size=self.data_manager.batch_size,
             collate_fn=self.data_manager.prepare_data,
         )
-        counts = {}
-        results_of_each_entity = {}
-        for class_name, class_id in self.data_manager.categories.items():
-            counts[class_id] = {'A': 0.0, 'B': 1e-10, 'C': 1e-10}
-            class_name = self.data_manager.reverse_categories[class_id]
-            results_of_each_entity[class_name] = {}
-
-        with torch.no_grad():
-            self.model.eval()
-            self.logger.info('start test engines...')
-            for batch in tqdm(test_loader):
-                texts, entity_results, token_ids, segment_ids, attention_mask, _ = batch
-                token_ids = token_ids.to(self.device)
-                segment_ids = segment_ids.to(self.device)
-                attention_mask = attention_mask.to(self.device)
-                logits, _ = self.model(token_ids, attention_mask, segment_ids)
-                logits = logits.to('cpu')
-                for text, logit, entity_result in zip(texts, logits, entity_results):
-                    p_results = self.data_manager.extract_entities(text, logit)
-                    for class_id, entity_set in entity_result.items():
-                        p_entity_set = p_results.get(class_id)
-                        if p_entity_set is None:
-                            # 没预测出来
-                            p_entity_set = set()
-                        # 预测出来并且正确个数
-                        counts[class_id]['A'] += len(p_entity_set & entity_set)
-                        # 预测出来的结果个数
-                        counts[class_id]['B'] += len(p_entity_set)
-                        # 真实的结果个数
-                        counts[class_id]['C'] += len(entity_set)
-        for class_id, count in counts.items():
-            f1, precision, recall = 2 * count['A'] / (
-                    count['B'] + count['C']), count['A'] / count['B'], count['A'] / count['C']
-            class_name = self.data_manager.reverse_categories[class_id]
-            results_of_each_entity[class_name]['f1'] = f1
-            results_of_each_entity[class_name]['precision'] = precision
-            results_of_each_entity[class_name]['recall'] = recall
-
-        f1 = 0.0
-        for class_id, performance in results_of_each_entity.items():
-            f1 += performance['f1']
-            # 打印每个类别的指标
-            self.logger.info('class_name: %s, precision: %.4f, recall: %.4f, f1: %.4f'
-                             % (class_id, performance['precision'], performance['recall'], performance['f1']))
+        from engines.train import Train
+        train = Train(self.configs, self.data_manager, self.device, self.logger)
+        train.validate(self.model, test_loader)
 
     def convert_torch_to_tf(self):
             import onnx
