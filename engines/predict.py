@@ -63,19 +63,19 @@ class Predictor:
         train.validate(self.model, test_loader)
 
     def convert_torch_to_tf(self):
-            import onnx
-            from onnx_tf.backend import prepare
-            max_sequence_length = self.data_manager.max_sequence_length
-            dummy_input = torch.ones([1, max_sequence_length]).to('cpu').long()
-            dummy_input = (dummy_input, dummy_input, dummy_input)
-            onnx_path = self.checkpoints_dir + '/model.onnx'
-            torch.onnx.export(self.model.to('cpu'), dummy_input, f=onnx_path, opset_version=13,
-                              input_names=['tokens', 'attentions', 'types'], output_names=['logits', 'probs'],
-                              do_constant_folding=False,
-                              dynamic_axes={'tokens': {0: 'batch_size'}, 'attentions': {0: 'batch_size'},
-                                            'types': {0: 'batch_size'}, 'logits': {0: 'batch_size'},
-                                            'probs': {0: 'batch_size'}})
-            model_onnx = onnx.load(onnx_path)
-            tf_rep = prepare(model_onnx)
-            tf_rep.export_graph(self.checkpoints_dir + '/model.pb')
-            self.logger.info('convert torch to tensorflow pb successful...')
+        import onnx
+        from onnx_tf.backend import prepare
+        max_sequence_length = self.data_manager.max_sequence_length
+        dummy_input = torch.ones([1, max_sequence_length]).to('cpu').long()
+        dummy_input = (dummy_input, dummy_input, dummy_input)
+        onnx_path = self.checkpoints_dir + '/model.onnx'
+        torch.onnx.export(self.model.to('cpu'), dummy_input, f=onnx_path, opset_version=13,
+                          input_names=['tokens', 'attentions', 'types'], output_names=['logits', 'probs'],
+                          do_constant_folding=False,
+                          dynamic_axes={'tokens': {0: 'batch_size'}, 'attentions': {0: 'batch_size'},
+                                        'types': {0: 'batch_size'}, 'logits': {0: 'batch_size'},
+                                        'probs': {0: 'batch_size'}})
+        model_onnx = onnx.load(onnx_path)
+        tf_rep = prepare(model_onnx)
+        tf_rep.export_graph(self.checkpoints_dir + '/model.pb')
+        self.logger.info('convert torch to tensorflow pb successful...')
