@@ -14,7 +14,7 @@ class EffiGlobalPointer(nn.Module):
         self.inner_dim = 64
         self.hidden_size = self.encoder.config.hidden_size
         self.RoPE = rope
-        if mode == 'convert2tf':
+        if mode == 'convert_onnx':
             self.onnx_adds = ONNXAdds()
             self.device = 'cpu'
 
@@ -52,7 +52,7 @@ class EffiGlobalPointer(nn.Module):
         logits = self.sequence_masking(logits, mask, '-inf', logits.ndim - 2)
         logits = self.sequence_masking(logits, mask, '-inf', logits.ndim - 1)
         # 排除下三角
-        if mode == 'convert2tf':
+        if mode == 'convert_onnx':
             # onnx中支持tril的实现方法
             mask = self.onnx_adds.tril_onnx(torch.ones_like(logits), diagonal=-1)
         else:

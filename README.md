@@ -99,7 +99,7 @@ configure = {
 # interactive_predict:交互模式
 # test:跑测试集
 # convert2tf:将torch模型保存为tf框架的pb格式文件
-# [train, interactive_predict, test, convert2tf]
+# [train, interactive_predict, test, convert_onnx]
 mode = 'train'
 ```  
 
@@ -112,7 +112,7 @@ mode = 'train'
 # train:训练分类器
 # interactive_predict:交互模式
 # test:跑测试集
-# convert2tf:将torch模型保存为tf框架的pb格式文件
+# convert_onnx:将torch模型保存为onnx格式文件
 # [train, interactive_predict, test, convert2tf]
 mode = 'interactive_predict'
 ```

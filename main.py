@@ -69,9 +69,9 @@ if __name__ == '__main__':
         logger.info('mode: test')
         predictor = Predictor(configure, data_manager, device, logger)
         predictor.predict_test()
-    elif mode == 'convert2tf':
+    elif mode == 'convert_onnx':
         logger.info(json.dumps(configure, indent=2, ensure_ascii=False))
-        logger.info('mode: convert2tf')
+        logger.info('mode: convert_onnx')
         from engines.predict import Predictor
         predictor = Predictor(configure, data_manager, device, logger)
-        predictor.convert_torch_to_tf()
+        predictor.convert_onnx()
