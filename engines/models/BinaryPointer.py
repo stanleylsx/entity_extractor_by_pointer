@@ -14,9 +14,9 @@ class BinaryPointer(nn.Module, ABC):
     def __init__(self, num_labels):
         super(BinaryPointer, self).__init__()
         self.num_labels = num_labels
-        hidden_size = 768
-        self.layer_norm = nn.LayerNorm(hidden_size, eps=1e-12)
         self.bert_model = BertModel.from_pretrained('bert-base-chinese')
+        hidden_size = self.bert_model.config.hidden_size
+        self.layer_norm = nn.LayerNorm(hidden_size, eps=1e-12)
         self.fc = nn.Linear(hidden_size, 2 * num_labels)
         self.sigmoid = nn.Sigmoid()
 
