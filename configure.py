@@ -5,12 +5,12 @@
 # @Software: PyCharm
 
 # 模式
-# train:训练分类器
-# interactive_predict:交互模式
-# test:跑测试集
-# convert2tf:将torch模型保存为tf框架的pb格式文件
-# [train, interactive_predict, test, convert_onnx]
-mode = 'train'
+# train:               训练分类器
+# interactive_predict: 交互模式
+# test:                跑测试集
+# convert2tf:          将torch模型保存为onnx文件
+# show_model_info:     打印模型参数
+mode = 'interactive_predict'
 
 # 使用GPU设备
 use_cuda = True

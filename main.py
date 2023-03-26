@@ -6,6 +6,7 @@
 from engines.utils.logger import get_logger
 from configure import use_cuda, cuda_device, configure, mode
 from engines.data import DataManager
+from pprint import pprint
 import torch
 import os
 import json
@@ -62,7 +63,7 @@ if __name__ == '__main__':
             if sentence == 'exit':
                 break
             result = predictor.predict_one(sentence)
-            print(result)
+            pprint(result)
     elif mode == 'test':
         from engines.predict import Predictor
         logger.info(json.dumps(configure, indent=2, ensure_ascii=False))
@@ -75,3 +76,9 @@ if __name__ == '__main__':
         from engines.predict import Predictor
         predictor = Predictor(configure, data_manager, device, logger)
         predictor.convert_onnx()
+    elif mode == 'show_model_info':
+        logger.info(json.dumps(configure, indent=2, ensure_ascii=False))
+        logger.info('mode: show_model_info')
+        from engines.predict import Predictor
+        predictor = Predictor(configure, data_manager, device, logger)
+        predictor.show_model_info()

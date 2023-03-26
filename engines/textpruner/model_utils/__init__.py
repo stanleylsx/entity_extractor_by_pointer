@@ -1,0 +1,9 @@
+from .albert import AlbertVocabResizer, AlbertStructure
+from .bert import BertVocabResizer, BertStructure
+from .electra import ElectraVocabResizer, ElectraStructure
+from .roberta import RobertaVocabResizer, RobertaStructure
+from .xlm_roberta import XLMRobertaVocabResizer, XLMRobertaStructure
+from .xlm import XLMStructure, XLMVocabResizer
+from .bart import BartVocabResizer, BartStructure
+from .t5 import T5VocabResizer, T5Structure
+from .mt5 import MT5Structure, MT5VocabResizer

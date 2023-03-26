@@ -63,8 +63,6 @@ class Predictor:
         train.validate(self.model, test_loader)
 
     def convert_onnx(self):
-        import onnx
-        from onnx_tf.backend import prepare
         max_sequence_length = self.data_manager.max_sequence_length
         dummy_input = torch.ones([1, max_sequence_length]).to('cpu').long()
         dummy_input = (dummy_input, dummy_input, dummy_input)
@@ -75,3 +73,8 @@ class Predictor:
                           dynamic_axes={'tokens': {0: 'batch_size'}, 'attentions': {0: 'batch_size'},
                                         'types': {0: 'batch_size'}, 'logits': {0: 'batch_size'},
                                         'probs': {0: 'batch_size'}})
+
+    def show_model_info(self):
+        from engines.textpruner import summary
+        info = summary(self.model, max_level=3)
+        self.logger.info(info)
