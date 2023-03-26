@@ -5,9 +5,9 @@
 爱打比赛朋友可以继续在里面加入想要的tricks。
 
 ## 环境
-* torch==1.9.0+cu102
-* tqdm==4.48.2
-* transformers==4.8.2
+* torch==1.13.1
+* tqdm==4.65.0
+* transformers==4.27.3  
 
 其他环境见requirements.txt
 
