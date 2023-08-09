@@ -3,6 +3,7 @@ from collections.abc import Mapping
 from tqdm import tqdm
 import time
 from typing import Tuple, Union,Dict,Optional,List
+import numpy as np
 
 class LayerNode:
     def __init__(self,name,parent=None,value=None,fullname=None):
@@ -24,7 +25,7 @@ class LayerNode:
             else:
                 if isinstance(value,(tuple,list)):
                     old_value = self.parent.value
-                    new_value = [old_value[i]+value[i] for i in range(len(value))]
+                    new_value = np.add(old_value,value).tolist()
                     self.parent.value = new_value
                 else:
                     self.parent.value += value
