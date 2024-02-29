@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author : lishouxian
 # @Email : gzlishouxian@gmail.com
-# @File : model.py
-# @Software: PyCharm
+# @File : BinaryPointer.py
+# @Software: VScode
 from abc import ABC
 
 import torch

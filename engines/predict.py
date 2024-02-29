@@ -2,7 +2,7 @@
 # @Author : lishouxian
 # @Email : gzlishouxian@gmail.com
 # @File : predict.py
-# @Software: PyCharm
+# @Software: VScode
 import torch
 import os
 import time

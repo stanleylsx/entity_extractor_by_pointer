@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # @Time : 2020/10/20 11:03 下午
 # @Author : Stanley
-# @EMail : gzlishouxian@corp.netease.com
+# @EMail : gzlishouxian@gmail.com
 # @File : gan_utils.py
-# @Software: PyCharm
+# @Software: VScode
 import torch
 
 

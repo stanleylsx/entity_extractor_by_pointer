@@ -5,8 +5,7 @@ import torch
 class ONNXAdds:
 
     @staticmethod
-    def tril_onnx2(inputs: torch.FloatTensor,
-                  diagonal: Optional[int] = 0) -> torch.FloatTensor:
+    def tril_onnx2(inputs: torch.FloatTensor, diagonal: Optional[int] = 0) -> torch.FloatTensor:
         """Caveat to export an tril-based operator with ONNX.
         Args:
             inputs: Input tensor.
@@ -41,5 +40,3 @@ class ONNXAdds:
             raise Exception('not supported inputs shape:' + inputs.shape)
 
         return torch.tensor(inputs_wrapper, device=inputs.device)
-
-

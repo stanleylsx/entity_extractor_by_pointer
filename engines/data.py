@@ -2,7 +2,7 @@
 # @Author : lishouxian
 # @Email : gzlishouxian@gmail.com
 # @File : data.py
-# @Software: PyCharm
+# @Software: VScode
 from transformers import BertTokenizerFast
 import torch
 import numpy as np

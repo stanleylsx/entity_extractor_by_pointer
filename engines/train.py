@@ -2,7 +2,7 @@
 # @Author : lishouxian
 # @Email : gzlishouxian@gmail.com
 # @File : train.py
-# @Software: PyCharm
+# @Software: VScode
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 import json
@@ -229,8 +229,7 @@ class Train:
                     self.logger.info('early stopped, no progress obtained within {} epochs'.format(
                         self.configs['patient']))
                     self.logger.info('overall best f1 is {} at {} epoch'.format(best_f1, best_epoch))
-                    self.logger.info('total training time consumption: %.3f(min)' % (
-                            (time.time() - very_start_time) / 60))
+                    self.logger.info('total training time consumption: %.3f(min)' % ((time.time() - very_start_time) / 60))
                     return
         self.logger.info('overall best f1 is {} at {} epoch'.format(best_f1, best_epoch))
         self.logger.info('total training time consumption: %.3f(min)' % ((time.time() - very_start_time) / 60))
@@ -268,7 +267,7 @@ class Train:
                         counts[class_id]['C'] += len(entity_set)
         for class_id, count in counts.items():
             f1, precision, recall = 2 * count['A'] / (
-                    count['B'] + count['C']), count['A'] / count['B'], count['A'] / count['C']
+                count['B'] + count['C']), count['A'] / count['B'], count['A'] / count['C']
             class_name = self.data_manager.reverse_categories[class_id]
             results_of_each_entity[class_name]['f1'] = f1
             results_of_each_entity[class_name]['precision'] = precision
@@ -278,8 +277,8 @@ class Train:
         for class_id, performance in results_of_each_entity.items():
             f1 += performance['f1']
             # 打印每个类别的指标
-            self.logger.info('class_name: %s, precision: %.4f, recall: %.4f, f1: %.4f'
-                        % (class_id, performance['precision'], performance['recall'], performance['f1']))
+            self.logger.info('class_name: %s, precision: %.4f, recall: %.4f, f1: %.4f' % (
+                class_id, performance['precision'], performance['recall'], performance['f1']))
         # 这里算得是所有类别的平均f1值
         f1 = f1 / len(results_of_each_entity)
         return f1

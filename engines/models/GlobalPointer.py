@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from transformers import BertModel
 from engines.utils.onnx_fun import ONNXAdds
-from configure import mode
+from config import mode
 
 
 class EffiGlobalPointer(nn.Module):

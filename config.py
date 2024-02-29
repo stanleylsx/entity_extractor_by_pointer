@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author : lishouxian
 # @Email : gzlishouxian@gmail.com
-# @File : configure.py
-# @Software: PyCharm
+# @File : config.py
+# @Software: VScode
 
 # 模式
 # train:               训练分类器

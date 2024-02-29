@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author : lishouxian
 # @Email : gzlishouxian@gmail.com
-# @File : losses.py
-# @Software: PyCharm
+# @File : GlobalPointer.py
+# @Software: VScode
 import torch
 
 

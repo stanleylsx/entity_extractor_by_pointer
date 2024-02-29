@@ -3,3 +3,4 @@ torchaudio==0.13.1
 torchvision==0.14.1
 tqdm==4.65.0
 transformers==4.27.3
+loguru==0.7.0
