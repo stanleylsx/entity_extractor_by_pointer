@@ -123,9 +123,3 @@ mode = 'interactive_predict'
 **公众号文章：[基于首尾标注的实体抽取开源工具](https://mp.weixin.qq.com/s/xVRKN7lwM3wVDrI3hR9X9A)**   
 **苏神文章：[科学空间-Efficient GlobalPointer：少点参数，多点效果](https://spaces.ac.cn/archives/8877)**   
 **GitHub：[Efficient-GlobalPointer-torch的torch实现](https://github.com/xhw205/Efficient-GlobalPointer-torch)**
-
-## 公众号  
-
-相关问题欢迎在公众号反馈：  
-
-![小贤算法屋](https://img-blog.csdnimg.cn/20210427094903895.jpg)
